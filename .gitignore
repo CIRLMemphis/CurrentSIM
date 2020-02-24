@@ -1,0 +1,12 @@
+*.aux
+*.log
+*.mat
+*.toc
+*.gz
+*.snm
+*.out
+*.asv
+*.nav
+*.jpg
+*.tif
+*.png

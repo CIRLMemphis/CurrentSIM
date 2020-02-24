@@ -1,0 +1,4 @@
+make clean
+./configure --enable-threads --prefix=/home/cvan/soft/fftw --enable-shared=yes
+make
+make install
