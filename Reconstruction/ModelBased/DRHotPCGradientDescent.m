@@ -29,7 +29,7 @@ end
 [Y, X, Z, Npt] = size(g);
 X   = X*2;
 Y   = Y*2;
-Z   = Z*2;
+Z   = Z + floor(Z/2)*2;
 [yy, xx, zz] = meshgrid(0 : 1 : X-1, 0 : 1 : Y-1, 0 : 1 : Z-1);
 
 if(nargin < 22)
