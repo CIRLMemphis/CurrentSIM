@@ -3,7 +3,7 @@
 #SBATCH --nodes 1
 #SBATCH --cpus-per-task=12
 #SBATCH --mem-per-cpu=5000M
-#SBATCH --time=1-00:00:00
+#SBATCH --time=2-00:00:00
 #SBATCH --mail-type=END
 #SBATCH --mail-user=cvan@memphis.edu
 
