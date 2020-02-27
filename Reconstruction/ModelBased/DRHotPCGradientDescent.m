@@ -9,19 +9,19 @@ retFig  = [];
 retVars = {};
 DEBUG_DISPLAY = 1;
 
-if(nargin < 17)
+if(nargin < 16)
     numIt = 10;
 end
 
-if(nargin < 18 || isequal(penalizationParam , -1))
+if(nargin < 17 || isequal(penalizationParam , -1))
     penalizationParam = 1e-8;
 end
 
-if(nargin < 20 || isequal(selectDir , -1) )
+if(nargin < 19 || isequal(selectDir , -1) )
     selectDir = 2;
 end
 
-if(nargin < 21)
+if(nargin < 20)
     picInterval = -1;
 end
 
@@ -32,7 +32,7 @@ Y   = Y*2;
 Z   = Z + floor(Z/2)*2;
 [yy, xx, zz] = meshgrid(0 : 1 : X-1, 0 : 1 : Y-1, 0 : 1 : Z-1);
 
-if(nargin < 22)
+if(nargin < 21)
     initInd = Npt;
 end
 
