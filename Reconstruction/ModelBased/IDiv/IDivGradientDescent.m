@@ -42,6 +42,7 @@ recon = initGuess;
 % end
 tic;
 Nm = size(im,6);
+del1    = 0.2;
 for it = 1:numIt
     gCur    = ForwardFct(recon, h, im, jm);
     costIn  = g2.*log(g2./gCur) - (g2 - gCur);
@@ -53,7 +54,7 @@ for it = 1:numIt
             for m = 1:Nm
                 patSum = patSum + IFT( FT(h.*im(:,:,:,l,k,m)) .* FT(jm(:,:,:,l,k,m)) );
             end
-            gradIn  = 1 - g2./gCur;
+            gradIn  = 1 - g2(:,:,:,l,k)./gCur(:,:,:,l,k);
             curGrad = curGrad + real(patSum)*sum(gradIn(:))/(X*Y*Z);
         end
     end
@@ -79,10 +80,52 @@ for it = 1:numIt
             desctDir = -curGrad;
     end
     
-    gDir = ForwardFct(desctDir, h, im, jm);
-    fun  = @(alpha)abs(sum(reshape( (1 - g2./(gCur + alpha*gDir)).*gDir, X*Y*Z*Nthe*Nphi,1 ))/(X*Y*Z));
-    alpha = fminunc(fun, 0);
-    %alpha = -0.01;
+%     gDir = ForwardFct(desctDir, h, im, jm);
+%     fun  = @(alpha)abs(sum(reshape( (1 - g2./(gCur + alpha*gDir)).*gDir, X*Y*Z*Nthe*Nphi,1 ))/(X*Y*Z));
+%     alpha = fminunc(fun, 0);
+%     %alpha = -0.01;
+    alpha   = 0.0;
+    while (alpha == 0.0)
+        gCur    = ForwardFct(recon+del1.*desctDir, h, im, jm);
+        costIn  = g2.*log(g2./gCur) - (g2 - gCur);
+        crit1   = sum(costIn(:))/(X*Y*Z); % cost function at x + delta
+        if (curCrit > crit1)
+            del2    = 2*del1;
+            gCur    = ForwardFct(recon+del2.*desctDir, h, im, jm);
+            costIn  = g2.*log(g2./gCur) - (g2 - gCur);
+            crit2   = sum(costIn(:))/(X*Y*Z); % cost function at x + 2*delta
+        else
+            del2    = -del1;
+            gCur    = ForwardFct(recon + del2.*desctDir, h, im, jm);
+            costIn  = g2.*log(g2./gCur) - (g2 - gCur);
+            crit2   = sum(costIn(:))/(X*Y*Z); % cost function at x - delta
+        end
+
+        % fit quadratic function through curCrit, crit1, crit2 at 0, del1, del2
+        % correspondingly
+        leftA  = [ 0, 0, 1; del1^2, del1, 1; del2^2, del2, 1];
+        rightB = [ curCrit; crit1; crit2];
+        coefs  = leftA\rightB;
+        minDel = -coefs(2)/(2*coefs(1)); % step size is minimum of quadratic function -b/2a
+        gCur   = ForwardFct(recon+minDel.*desctDir, h, im, jm);
+        costIn = g2.*log(g2./gCur) - (g2 - gCur);
+        crit3  = sum(costIn(:))/(X*Y*Z); % cost function at x + minDel
+
+        % check minimum of [curCrit, crit1, crit2, crit3]
+        [~, ind] = min([curCrit, crit1, crit2, crit3]);
+        if (ind == 1)
+            alpha = 0.0;
+            fprintf('Taking half of delta...\n');
+            del1 = del1/2;
+        elseif (ind == 2)
+            alpha = del1;
+        elseif (ind == 3)
+            alpha = del2;
+        else
+            alpha = minDel;
+        end
+    end
+    
     if(DEBUG_DISPLAY)
         fprintf('It : %d \n',it);
         fprintf('Alpha : %03.2e    crit : %d\n',alpha, curCrit);

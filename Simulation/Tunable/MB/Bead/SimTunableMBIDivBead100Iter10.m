@@ -2,13 +2,13 @@ run("../../Bead/SimTunableBead100Setup.m");
 matFile = CIRLDataPath + "/Simulation/Tunable/SimTunableBead100.mat";
 
 %% run RunReconstruction
-numIt = 10;
+numIt = 100;
 X     = 2*X;
 Y     = 2*Y;
 Z     = 2*Z; 
 dXY   = dXY/2;
 dZ    = dZ/2;
-picIn = 5;    % picture every 5 interations
+picIn = 10;    % picture every 5 interations
 RunReconstruction(...
             'savemat',          1, ...
             'u',                u, ...
