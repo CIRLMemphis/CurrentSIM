@@ -13,9 +13,8 @@ load(CIRLDataPath + "/FairSimData/OMX_U2OS_Actin_525nm.mat", 'g');
 
 %% load the reconstruction results
 expNames = ["201912181803_Exp3WU2OSActinOptGWF", ...
-            "202002121211_Exp3WU2OSActinMBMatchVz",  ...
             "202002221320_Exp3WU2OSActinPSFVzMBPC"];
-iterInd  = [0, 10, 10];
+iterInd  = [0, 10];
 load(CIRLDataPath + "/Results/U2OSActin/" + expNames(1) + "/" + expNames(1) + ".mat",...
      'X', 'Y', 'Z', 'dXY', 'dZ', 'reconOb', 'retVars');
  
@@ -34,41 +33,28 @@ load(CIRLDataPath + "/Results/U2OSActin/" + expNames(2) + "/" + expNames(2) + ".
  
 %%
 reconOb = retVars{iterInd(2)};
-MBObNor = reconOb./sum(reconOb(:));
-MBObNor(MBObNor < 0) = 0;
-MBObNor = MBObNor/max(MBObNor(:));
-
-%% load the MB with Exp PSF, analytic Vz results
-load(CIRLDataPath + "/Results/U2OSActin/" + expNames(3) + "/" + expNames(3) + ".mat",...
-     'X', 'Y', 'Z', 'dXY', 'dZ', 'retVars');
- 
-%%
-reconOb = retVars{iterInd(3)};
-MBObNorMismatch = reconOb./sum(reconOb(:));
-MBObNorMismatch(MBObNorMismatch < 0) = 0;
-MBObNorMismatch = MBObNorMismatch/max(MBObNorMismatch(:));
+MBPCObNor = reconOb./sum(reconOb(:));
+MBPCObNor(MBPCObNor < 0) = 0;
+MBPCObNor = MBPCObNor/max(MBPCObNor(:));
 
 
 %% XY plan
 for zBest = 10:16
-    figTitles = ["Conventional", "3D-GWF", "3D-MB, ExpOTF", "3D-MBPC, ExpOTF"];
+    figTitles = ["Conventional", "3D-GWF", "3D-MBPC"];
     xyRegionX =   1:200;
     xyRegionY =   1024-200:1024;
     fig   = figure();
     fig.WindowState = 'maximized';
-    [ha, pos] = TightSubplot(1,4,[.01 .001],[.01 .03],[.01 .01]);
+    [ha, pos] = TightSubplot(1,3,[.01 .001],[.01 .03],[.01 .01]);
     axes(ha(1));
     imagesc(WFNor(xyRegionY, xyRegionX,zBest)); axis image; axis off; caxis(colorScale); colormap(colormapSet); xlabel('x'); ylabel('y');
-    title(figTitles(1))
+    %title(figTitles(1))
     axes(ha(2));
     imagesc(GWFObNor(xyRegionY, xyRegionX,zBest)); axis image; axis off; caxis(colorScale); colormap(colormapSet); xlabel('x'); ylabel('y');
-    title(figTitles(2))
+    %title(figTitles(2))
     axes(ha(3));
-    imagesc(MBObNor(xyRegionY, xyRegionX,zBest)); axis image; axis off; caxis(colorScale); colormap(colormapSet); xlabel('x'); ylabel('y');
-    title(figTitles(3))
-    axes(ha(4));
-    imagesc(MBObNorMismatch(xyRegionY, xyRegionX,zBest)); axis image; axis off; caxis(colorScale); colormap(colormapSet); xlabel('x'); ylabel('y');
-    title(figTitles(4))
+    imagesc(MBPCObNor(xyRegionY, xyRegionX,zBest)); axis image; axis off; caxis(colorScale); colormap(colormapSet); xlabel('x'); ylabel('y');
+    %title(figTitles(3))
     print(gcf,char("XYCompare_" + zBest + ".png"),'-dpng','-r300');
 end
 
@@ -76,17 +62,14 @@ end
 yBest = 1024-(200-130)-1;
 fig   = figure();
 fig.WindowState = 'maximized';
-[ha, pos] = TightSubplot(1,4,[.01 .001],[.01 .03],[.01 .01]);
+[ha, pos] = TightSubplot(1,3,[.01 .001],[.01 .03],[.01 .01]);
 axes(ha(1));
 imagesc(squeeze(WFNor(yBest, xyRegionX,:))'); axis image; axis off; caxis(colorScale); colormap(colormapSet); xlabel('x'); ylabel('y');
-title(figTitles(1))
+%title(figTitles(1))
 axes(ha(2));
 imagesc(squeeze(GWFObNor(yBest, xyRegionX,:))'); axis image; axis off; caxis(colorScale); colormap(colormapSet); xlabel('x'); ylabel('y');
-title(figTitles(2))
+%title(figTitles(2))
 axes(ha(3));
-imagesc(squeeze(MBObNor(yBest, xyRegionX,:))'); axis image; axis off; caxis(colorScale); colormap(colormapSet); xlabel('x'); ylabel('y');
-title(figTitles(3))
-axes(ha(4));
-imagesc(squeeze(MBObNorMismatch(yBest, xyRegionX,:))'); axis image; axis off; caxis(colorScale); colormap(colormapSet); xlabel('x'); ylabel('y');
-title(figTitles(4))
+imagesc(squeeze(MBPCObNor(yBest, xyRegionX,:))'); axis image; axis off; caxis(colorScale); colormap(colormapSet); xlabel('x'); ylabel('y');
+%title(figTitles(3))
 print(gcf,char("XZCompare.png"),'-dpng','-r300');
