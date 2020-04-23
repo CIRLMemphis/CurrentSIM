@@ -83,7 +83,7 @@ dUV_ref = str2num(s.fairsim.otf3d.data.cycles_dash_lateral.Text);
 
 X   = 512*2;
 Y   = 512*2;
-Z   = 7+6;
+Z   = 21+20;
 dXY = 0.08/2;
 dZ  = 0.125/2;
 dUV = 1/X/dXY;

@@ -1,4 +1,7 @@
-function [ psfpar, psfpari ] = PSFFairSIM( )
+function [ psfpar, psfpari ] = PSFFairSIM( inLambda )
+if nargin < 1
+    inLambda = 0.525;
+end
 
 distToCoverslip = 0;    % distance to cover slip, for a descending axis use a negative value
 ni = 1.518; niD = 1.518;  % ni/niD-actual/design immersion index
@@ -8,10 +11,10 @@ ns = 1.47;  ts = distToCoverslip; % ns/ts-actual index/depth[microns] of/into sa
 tiD = 190;            % tiD working-distance
 % observation
 NA = 1.4;                % NA/num aperture
-Lambda = 0.525;          % wavelength [microns]
+Lambda = inLambda;          % wavelength [microns]
 % illumination
 NAi = 1.4;               % NA/num aperture
-Lambdai = 0.525;         % wavelength [microns]
+Lambdai = inLambda;         % wavelength [microns]
 
 psfpar = psfparameter(...
     NA,...               % Numerical aperture objective
