@@ -3,13 +3,13 @@ run("../../3DStarLike/Sim3W3DStar256Setup.m");
 matFile = CIRLDataPath + "/Simulation/3W/Sim3W3DStar256SNR15dB.mat";
 
 %% run RunReconstruction
-numIt = 200;
+numIt = 400;
 X     = 2*X;
 Y     = 2*Y;
 Z     = 2*Z; 
 dXY   = dXY/2;
 dZ    = dZ/2;
-picIn = 50;    % picture every 20 interations
+picIn = 100;    % picture every 20 interations
 RunReconstruction(...
             'savemat',          1, ...
             'u',                u, ...

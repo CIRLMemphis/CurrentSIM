@@ -2,8 +2,8 @@
 #SBATCH --partition computeq
 #SBATCH --nodes 1
 #SBATCH --cpus-per-task=12
-#SBATCH --mem-per-cpu=5000M
-#SBATCH --time=4-00:00:00
+#SBATCH --mem-per-cpu=4000M
+#SBATCH --time=7-00:00:00
 #SBATCH --mail-type=END
 #SBATCH --mail-user=cvan@memphis.edu
 
