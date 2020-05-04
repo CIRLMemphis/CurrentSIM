@@ -9,19 +9,17 @@ yBest       = 257;
 zBest       = 257;
 
 %% load the reconstruction results
-expNames = ["202005041407_Sim3WOpt1e3GWF3DStar256SNR15dB",...
-            "202005032052_Sim3WOptGWF3DStar256SNR15dB",...
-            "202005010618_Sim3WMBHot3DStar256SNR15dBIter400",...
-            "202005031550_Sim3WMBPCHot3DStar256SNR15dBReg1e5Iter400"];
-iterInd  = [0, 0, 4, 4];
-load(CIRLDataPath + "\Results\3DStarLike\" + expNames(1) + "\" + expNames(1) + ".mat",...
+expNames = ["202005041333_Sim3WOpt1e3GWF3DSmallStar256SNR15dB",...
+            "202005041240_Sim3WOptGWF3DSmallStar256SNR15dB"];
+iterInd  = [0, 0];
+load(CIRLDataPath + "\Results\3DSmallStar\" + expNames(1) + "\" + expNames(1) + ".mat",...
      'X', 'Y', 'Z', 'dXY', 'dZ', 'uc', 'u', 'retVars');
 
 %% load the original high resolution object
 X2 = X*2;
 Y2 = Y*2;
 Z2 = Z*2;
-matFile = CIRLDataPath + "\Simulation\3W\Sim3W3DStar512.mat";
+matFile = CIRLDataPath + "\Simulation\3W\Sim3W3DSmallStar512.mat";
 load(matFile, 'ob');
 HROb  = ob;
 norOb = ob; % multi object is already on scale [0,1]
@@ -52,7 +50,7 @@ kPhi    = 1;
 recVars{end+1} = HROb;
 
 % add the widefield image
-load(CIRLDataPath + "\Results\3DStarLike\" + expNames(1) + "\" + expNames(1) + ".mat", 'g');
+load(CIRLDataPath + "\Results\3DSmallStar\" + expNames(1) + "\" + expNames(1) + ".mat", 'g');
 reconOb        = g(:,:,:,lThe,1) + g(:,:,:,lThe,2) + g(:,:,:,lThe,3) + g(:,:,:,lThe,4) + g(:,:,:,lThe,5);
 recVars{end+1} = reconOb./sum(reconOb(:))*sum(HROb(:));
 
@@ -66,16 +64,16 @@ MSE  = zeros(length(expNames), 1);
 SSIM = zeros(length(expNames), 1);
 for k = 1:length(expNames)
     if (iterInd(k) == 0)
-        load(CIRLDataPath + "\Results\3DStarLike\" + expNames(k) + "\" + expNames(k) + ".mat", 'reconOb');
+        load(CIRLDataPath + "\Results\3DSmallStar\" + expNames(k) + "\" + expNames(k) + ".mat", 'reconOb');
         recVars{end+1} = reconOb./sum(reconOb(:))*sum(HROb(:));
     else
-        load(CIRLDataPath + "\Results\3DStarLike\" + expNames(k) + "\" + expNames(k) + ".mat", 'retVars');
+        load(CIRLDataPath + "\Results\3DSmallStar\" + expNames(k) + "\" + expNames(k) + ".mat", 'retVars');
         recVars{end+1} = retVars{iterInd(k)}./sum(retVars{iterInd(k)}(:))*sum(HROb(:));
     end
     recVars{end}(recVars{end} < 0) = 0;
     [ MSE(k), SSIM(k) ] = MSESSIM(recVars{end}, norOb);
 end
-texRet = MSESSIMtoTex(MSE, SSIM, ["GWF1e3 15dB", "GWF1e2 15dB", "MB 15dB", "MBPC 15dB"])
+texRet = MSESSIMtoTex(MSE, SSIM, ["GWF1e3 15dB", "GWF1e2 15dB"])
 
 
 %%

@@ -1,7 +1,7 @@
 function fig = OSSRSubplot(vars, zBF, yBF, colTitles, supTitle, colormapSet, xyRegionX, xyRegionY, xzRegionX, xzRegionZ, colorScale)
 nVars = length(vars);
 fig   = figure('Position', get(0, 'Screensize'));
-[ha, pos] = TightSubplot(2,round(nVars/2),[.01 .001],[.01 .03],[.01 .01]);
+[ha, pos] = TightSubplot(2,4,[.01 .001],[.01 .03],[.01 .01]);
 for k = 1:nVars
     curVar  = vars{k};
     if (zBF > size(curVar,3))
@@ -23,7 +23,7 @@ if (~isempty(supTitle))
 end
 
 fig   = figure('Position', get(0, 'Screensize'));
-[ha, pos] = TightSubplot(2,round(nVars/2),[.01 .001],[.01 .03],[.01 .01]);
+[ha, pos] = TightSubplot(2,4,[.01 .001],[.01 .03],[.01 .01]);
 for k = 1:nVars
     curVar  = vars{k};
     if (zBF > size(curVar,3))
