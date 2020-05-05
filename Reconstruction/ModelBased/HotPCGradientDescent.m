@@ -117,6 +117,7 @@ for it = 1:numIt
         title("it = " + num2str(it));
         retVars{end+1} = recon2;
         saveas(retFig(end), it + "_" + curFig);
+        save(tNow + ".mat", 'retVars', '-v7.3')
     end
     
     if (mod(it, 10) == 0)
