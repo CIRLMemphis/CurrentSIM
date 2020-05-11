@@ -1,8 +1,8 @@
-run("Sim3W3DImbaStar256Setup.m");
+run("Sim3W3DBigStar256Setup.m");
 
 
 %% load the noiseless data
-matFile = CIRLDataPath + "/Simulation/3W/Sim3W3DImbaStar256.mat";
+matFile = CIRLDataPath + "/Simulation/3W/Sim3W3DBigStar256.mat";
 load(matFile, 'g');
 
 % add Poisson noise
@@ -15,5 +15,5 @@ for l = 1:size(g,4)
 end
 
 %% save the noisy data
-matFile = CIRLDataPath + "/Simulation/3W/Sim3W3DImbaStar256SNR15dB.mat";
+matFile = CIRLDataPath + "/Simulation/3W/Sim3W3DBigStar256SNR15dB.mat";
 save(matFile, '-v7.3', 'g');
