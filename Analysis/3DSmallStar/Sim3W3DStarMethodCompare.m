@@ -10,8 +10,9 @@ zBest       = 257;
 
 %% load the reconstruction results
 expNames = ["202005041333_Sim3WOpt1e3GWF3DSmallStar256SNR15dB",...
-            "202005041240_Sim3WOptGWF3DSmallStar256SNR15dB"];
-iterInd  = [0, 0];
+            "202005041240_Sim3WOptGWF3DSmallStar256SNR15dB",...
+            "20200505004829"];
+iterInd  = [0, 0, 2];
 load(CIRLDataPath + "\Results\3DSmallStar\" + expNames(1) + "\" + expNames(1) + ".mat",...
      'X', 'Y', 'Z', 'dXY', 'dZ', 'uc', 'u', 'retVars');
 
@@ -73,13 +74,13 @@ for k = 1:length(expNames)
     recVars{end}(recVars{end} < 0) = 0;
     [ MSE(k), SSIM(k) ] = MSESSIM(recVars{end}, norOb);
 end
-texRet = MSESSIMtoTex(MSE, SSIM, ["GWF1e3 15dB", "GWF1e2 15dB"])
+texRet = MSESSIMtoTex(MSE, SSIM, ["GWF1e3 15dB", "GWF1e2 15dB", "MBPCReg1e5, 200Iter"])
 
 
 %%
-colormapSet = 'jet';
+colormapSet = 'gray';
 MethodCompareFig = OSSRSubplot( recVars, z2BF, y2BF, ...
-                                ["True Object", "Widefield", "GWF-Deconvolved WF", "GWF, 1e-3", "GWF, 1e-2", "MB, 400 Iter", "MBPCReg1e5, 400Iter"],...
+                                ["True Object", "Widefield", "GWF-Deconvolved WF", "GWF, 1e-3", "GWF, 1e-2", "MBPCReg1e5, 200Iter"],...
                                 [],...
                                 colormapSet, xyRegionX, xyRegionY, xzRegionX, xzRegionZ, colorScale);
 saveas(MethodCompareFig, "3W2P15dBBestMethodComparison.jpg");
