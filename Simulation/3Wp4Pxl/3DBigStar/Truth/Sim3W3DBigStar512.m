@@ -10,3 +10,16 @@ save(matFile, '-v7.3', 'g', 'ob');
 matFile = CIRLDataPath + "/Simulation/3W/Sim3W3DBigStar256.mat";
 g = g(1:2:end, 1:2:end, 1:2:end, :,:);
 save(matFile, '-v7.3', 'g');
+
+%% add Poisson noise
+b = 0.0168; % 1.5% of the signal is background
+scaleCCA = 2980;
+for l = 1:size(g,4)
+    for k = 1:size(g,5)
+        [g(:,:,:,l,k), SNR] = AddPoissnNoise(g(:,:,:,l,k),b,scaleCCA);
+    end
+end
+
+%% save the noisy data
+matFile = CIRLDataPath + "/Simulation/3W/Sim3W3DBigStar256SNR15dB.mat";
+save(matFile, '-v7.3', 'g');
