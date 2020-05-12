@@ -1,5 +1,5 @@
 %%
-load('C:\Users\cvan\OneDrive - The University of Memphis\CIRLData\Simulation\3W\Sim3W3DBigStar512.mat', 'ob', 'g')
+load('C:\Users\cvan\OneDrive - The University of Memphis\CIRLData\Simulation\3W\Sim3W3Dp8BigStar512.mat', 'ob', 'g')
 
 %%
 dx     = 0.224;
