@@ -21,5 +21,5 @@ for l = 1:size(g,4)
 end
 
 %% save the noisy data
-matFile = CIRLDataPath + "/Simulation/3W/Sim3W3Dp8BigStar256SNR15dB.mat";
+matFile = CIRLDataPath + "/Simulation/3W/Sim3W3Dp6BigStar256SNR15dB.mat";
 save(matFile, '-v7.3', 'g');
