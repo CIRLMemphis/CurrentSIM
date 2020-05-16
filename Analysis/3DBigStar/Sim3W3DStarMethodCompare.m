@@ -9,7 +9,7 @@ yBest       = 257;
 zBest       = 257;
 
 %% load the reconstruction results
-expNames = ["202005111322_Sim3WOptGWF3DBigStar256SNR15dB"];
+expNames = ["202005111612_Sim3WOptGWF3DBigStar256SNR15dB"];
 iterInd  = [0];
 load(CIRLDataPath + "\Results\3DBigStar\" + expNames(1) + "\" + expNames(1) + ".mat",...
      'X', 'Y', 'Z', 'dXY', 'dZ', 'uc', 'u', 'retVars');
