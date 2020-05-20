@@ -10,9 +10,8 @@ zBest       = 257;
 
 %% load the reconstruction results
 expNames = ["202005152310_Sim3WOpt1e3GWF3Dp4S6Star256SNR15dB", ...
-            "202005152247_Sim3WOpt1e2GWF3Dp4S6Star256SNR15dB", ...
             "20200516052932"];
-iterInd  = [0, 0, 4];
+iterInd  = [0, 4];
 load(CIRLDataPath + "\Results\3Dp4S6Star\" + expNames(1) + "\" + expNames(1) + ".mat",...
      'X', 'Y', 'Z', 'dXY', 'dZ', 'uc', 'u', 'retVars');
 
@@ -20,26 +19,14 @@ load(CIRLDataPath + "\Results\3Dp4S6Star\" + expNames(1) + "\" + expNames(1) + "
 X2 = X*2;
 Y2 = Y*2;
 Z2 = Z*2;
+z2BF      = 1 + Z2/2;
+y2BF      = 1 + Y2/2;
+midOff    = 41;
+midSlice  = y2BF-midOff-1:y2BF+midOff-1;
+
 ob = StarLikeSample(3,512,6,20,3,0.6);
 HROb  = ob;
 norOb = ob; % multi object is already on scale [0,1]
-
-%% True Object
-z2BF      = 1 + Z2/2;
-y2BF      = 1 + Y2/2;
-midOff   = 41;
-midSlice = y2BF-midOff-1:y2BF+midOff-1;
-TrueObFig = figure('Position', get(0, 'Screensize'));
-subplot(3,1,1); 
-imagesc(HROb(:,:,z2BF)); axis square; colormap(colormapSet); colorbar;
-xlabel('x'); ylabel('y'); title('True Object');
-subplot(3,1,2);
-imagesc(squeeze(HROb(y2BF,:,:))'); axis square; colormap(colormapSet); colorbar;
-xlabel('x'); ylabel('z');
-subplot(3,1,3);
-imagesc(HROb(midSlice, midSlice, z2BF)); axis square; colormap(colormapSet); colorbar;
-xlabel('x'); ylabel('z'); title('Zoomed-in middle');
-saveas(TrueObFig, "TrueObject.jpg");
 
 %% Reconstruction images of different methods
 recVars = {};
@@ -81,10 +68,19 @@ reconObNor = reconOb./sum(reconOb(:))*sum(HROb(:));
 reconObNor = permute(reconObNor, [2, 1, 3]);
 recVars{end+1} = reconObNor;
 
-%% plot the raw data
-figure;
-subplot(1,2,1); imagesc(squeeze(g(:,:,129,1,1))) ; axis image; colormap gray; xlabel('x'); ylabel('y');
-subplot(1,2,2); imagesc(squeeze(g(129,:,:,1,1))'); axis image; colormap gray; xlabel('x'); ylabel('z');
+%% plot the truth vs raw data
+figure('Position', get(0, 'Screensize'));
+[ha, ~]   = TightSubplot(1,2,[.01 .001],[.01 .03],[.01 .01]);
+axes(ha(1)); 
+imagesc(HROb(:,:,z2BF)); axis square off; colormap(colormapSet);
+axes(ha(2)); 
+imagesc(squeeze(HROb(y2BF,:,:))'); axis square off; colormap(colormapSet);
+figure('Position', get(0, 'Screensize'));
+[ha, ~]   = TightSubplot(1,2,[.01 .001],[.01 .03],[.01 .01]);
+axes(ha(1)); 
+imagesc(squeeze(g(:,:,129,1,1))) ; axis image off; colormap(colormapSet);
+axes(ha(2)); 
+imagesc(squeeze(g(129,:,:,1,1))'); axis image off; colormap(colormapSet);
 
 
 %% add the 3D-GWF, 3D-MB, 3D-MBPC results
@@ -106,14 +102,14 @@ texRet = MSESSIMtoTex(MSE, SSIM, ["GWF1e3 15dB", "GWF1e2 15dB", "MBPCReg1e5, 200
 %%
 colormapSet = 'gray';
 MethodCompareFig = OSSRSubplot( recVars, z2BF, y2BF, ...
-                                ...["True Object", "Widefield", "3D-GWF Deconvolved WF", "FairSIM, OTF atten", "FairSIM, no OTF atten", "3D-GWF, 1e-3", "3D-GWF, 1e-2", "MBPCReg1e5, 200Iter"],...
-                                ["True Object", "Widefield", "3D-GWF Deconvolved WF", "FairSIM, 1e-1, a 0.99", "3D-GWF, 1e-3", "3D-GWF, 1e-2", "MBPCReg1e5, 150Iter"],...
+                                ["True Object", "Widefield", "3D-GWF Deconvolved WF", "FairSIM", "3D-GWF", "3D-MBPC"],...
+                                ...["True Object", "Widefield", "3D-GWF Deconvolved WF", "FairSIM, 1e-1, a 0.99", "3D-GWF, 1e-3", "MBPCReg1e5, 150Iter"],...
                                 [],...
                                 colormapSet, xyRegionX, xyRegionY, xzRegionX, xzRegionZ, colorScale);
 saveas(MethodCompareFig, "3W2P15dBBestMethodComparison.jpg");
 
 %% profile comparison on XY plane
-profInd = [1, 4, 5, 7];
+profInd = [1, 4, 5, 6];
 profTxt = {"Truth", "FairSIM", "3D-GWF", "3D-MBPC"};
 profColor = {'k', 'y', 'g', 'r'};
 

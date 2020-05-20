@@ -2,6 +2,7 @@ run("../../../CIRLSetup.m");
 
 %% calibrated parameters
 [ psfpar, psfpari ] = PSFFairSIM(0.600);
+
 X     = 512;       % discrete lateral size in voxels
 Y     = 512;       % discrete lateral size in voxels
 Z     = 21;        % discrete axial size in voxels
@@ -12,9 +13,9 @@ offs  = [-96.6591, 162.87, 119.14]*2; % offs  = [154.5147, 295.5410, 44.9298]*2;
 phi   = [0, 72, 144, -144, -72]*2; % phi   = [-144, -72, 0, 72, 144];
 theta = -[-45.7139, 74.4161+180, 14.7330];
 u     = [0.9, 0.9, 0.9]*uc;
-w     = 0.2596*u;
+w     = 0.226*u;
 wD    = 0.05; 
-phizDeg   = 192;
+phizDeg   = 142;
 
 %% get the pattern and check
 zBF = 5;
