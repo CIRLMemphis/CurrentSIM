@@ -4,6 +4,7 @@ matFile = CIRLDataPath + "/Simulation/3W/Sim3W3Dp4S6Star512.mat";
 %% run forward model and save the results into CIRLDataPath
 ob  = StarLikeSample(3,512,6,20,3,0.6);
 gIn = ForwardModel(ob, h, im, jm);
+g   = gIn;
 save(matFile, '-v7.3', 'g', 'ob');
 
 %% get 256 data
