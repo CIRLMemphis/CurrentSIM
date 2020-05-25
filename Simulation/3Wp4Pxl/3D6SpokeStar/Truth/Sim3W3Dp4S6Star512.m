@@ -9,7 +9,8 @@ save(matFile, '-v7.3', 'g', 'ob');
 
 %% get 256 data
 matFile = CIRLDataPath + "/Simulation/3W/Sim3W3Dp4S6Star256.mat";
-g = gIn(1:2:end, 1:2:end, 1:2:end, :,:);
+gIn = gIn(1:2:end, 1:2:end, 1:2:end, :,:);
+g   = gIn;
 save(matFile, '-v7.3', 'g');
 
 %% add 15dB Poisson noise
