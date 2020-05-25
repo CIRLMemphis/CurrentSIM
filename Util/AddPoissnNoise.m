@@ -1,7 +1,7 @@
 function [noisy_image SNR]= AddPoissnNoise(image, b, scale)
 % Author: Nurmohammed Patwary; Date: 01/27/2016
 % This function adds noisy with the image.
-% Scale is an user defined parameter.
+% Scale is an user defined parameter, assumed to be the number of photons
 % b = % of background signal. [1.5% to 2%]
 % Syntex: noisy_image = AddPoissnNoise(image, scale)
 [ x y z]      = size(image);
