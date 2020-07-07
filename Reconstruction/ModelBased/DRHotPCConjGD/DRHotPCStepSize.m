@@ -14,9 +14,9 @@ for lk = 1:Npt
         A3 = zeros(Y, X, Z);
         if isDRWF && lk == Npt
             FThim  = FT(h.*imFunc(zz, dZ, omegaZ(1), phizDeg, 1));
-            A1     = A1 + real(IFT( FT(xi.*xi) .* FThim ));
-            A2     = A2 - real(IFT( FT(d .*xi) .* FThim ));
-            A3     = A3 - real(IFT( FT(d .*d ) .* FThim ));
+            A1     = A1 + 5*real(IFT( FT(xi.*xi) .* FThim ));
+            A2     = A2 - 5*real(IFT( FT(d .*xi) .* FThim ));
+            A3     = A3 - 5*real(IFT( FT(d .*d ) .* FThim ));
         else
             for m = 1:Nm
                 jmTemp = jmFunc(xx, yy, dXY, omegaXY(1), thePhiOff(lk,1), thePhiOff(lk,2), thePhiOff(lk,3), m);
