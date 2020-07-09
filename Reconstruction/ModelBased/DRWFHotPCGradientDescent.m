@@ -72,7 +72,7 @@ for it = 1:numIt
     desctDir = grad + dot(grad(:),(grad(:) - memGrad(:)))/ dot(memGrad(:),memGrad(:))*desctDir;
     
     alpha = StepSizeFct(ForwardFct, UpFct, g, desctDir, xi, h, imFct, jmFct, Nm, xx,     ...
-                        yy, zz, dXY, dZ, omegaXY, omegaZ, thePhiOff, phiz, 1);
+                        yy, zz, dXY, dZ, omegaXY, omegaZ, thePhiOff, phiz, -1, 1);
     fprintf('It : %d \n',it);
     fprintf('Alpha : %03.2e    crit : %d\n',alpha, crit);
     
