@@ -1,8 +1,8 @@
 function curStepSize = DRHotPSFVzPCStepSize(ForwardModelFct, UpFct, g0, d, xi, h, vz, jmFunc, Nm, xx, yy, zz, dXY, dZ, omegaXY, omegaZ, thePhiOff, phizDeg, penalizationParam, isDRWF)
-if(nargin < 21)
+if(nargin < 19)
     penalizationParam = -1;
 end
-if (nargin < 22)
+if (nargin < 20)
     isDRWF = 0;
 end
 [~, ~, ~, Npt] = size(g0);
