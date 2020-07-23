@@ -1,4 +1,4 @@
-run("Exp3WActinFullSetup.m");
+run("Exp3WU2OSMitoFullSetup.m");
 matFile = CIRLDataPath + "/FairSimData/OMX_U2OS_Mitotracker_600nm.mat";
 
 %% reduce data input and set the theta phi and offset
