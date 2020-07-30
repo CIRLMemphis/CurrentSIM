@@ -1,9 +1,7 @@
 function fig = OSSRSubplot(vars, zBF, yBF, colTitles, supTitle, colormapSet, xyRegionX, xyRegionY, xzRegionX, xzRegionZ, colorScale)
 nVars = length(vars);
-fig1  = figure('Position', get(0, 'Screensize'));
-[ha1, ~] = TightSubplot(1,6,[.01 .001],[.01 .03],[.01 .01]);
-fig2  = figure('Position', get(0, 'Screensize'));
-[ha2, ~] = TightSubplot(1,6,[.01 .001],[.01 .03],[.01 .01]);
+fig   = figure('Position', get(0, 'Screensize'));
+[ha, pos] = TightSubplot(2,4,[.01 .001],[.01 .03],[.01 .01]);
 
 %% resolution pixel computation
 dx     = 0.224;
@@ -18,16 +16,7 @@ dz_arc = dz*(6*4)/(2*pi*dZ);
 dz_SIM = 0.367;
 dz_SIM_arc = dz_SIM*(6*4)/(2*pi*dZ);
 
-for ind = 1:nVars*2
-    if (ind > nVars)
-        k = ind - nVars;
-        figure(fig2);
-        axes(ha2(k+(1-1)*nVars));
-    else
-        k = ind;
-        figure(fig1);
-        axes(ha1(k+(1-1)*nVars));
-    end
+for k = 1:nVars
     curVar  = vars{k};
     if (zBF > size(curVar,3))
         yBFCur = 1 + size(curVar,1)/2;
@@ -36,7 +25,7 @@ for ind = 1:nVars*2
         yBFCur = yBF;
         zBFCur = zBF;
     end
-    
+    axes(ha(k+(1-1)*nVars));
     imagesc(curVar(:,:,zBFCur)); axis square off; colormap(colormapSet);
     if (zBF > size(curVar,3))
         viscircles([128, 128], dx_arc/2,     'LineWidth', 1.0, 'LineStyle', '-', 'Color', 'red');
@@ -46,36 +35,17 @@ for ind = 1:nVars*2
         viscircles([256, 256], dx_SIM_arc, 'LineWidth', 1.0, 'LineStyle', '-', 'Color', 'blue');
     end
     caxis(colorScale);
-    if (~isempty(colTitles) && ind <= nVars)
+    if (~isempty(colTitles))
         title(colTitles(k));
     end
-    if (ind > nVars)
-        zoom on
-        zoom(3)
-        zoom off
-    end
 end
-
-
-
 if (~isempty(supTitle))
     suptitle(supTitle);
 end
 
-fig1  = figure('Position', get(0, 'Screensize'));
-[ha1, ~] = TightSubplot(1,6,[.01 .001],[.01 .03],[.01 .01]);
-fig2  = figure('Position', get(0, 'Screensize'));
-[ha2, ~] = TightSubplot(1,6,[.01 .001],[.01 .03],[.01 .01]);
-for ind = 1:nVars*2
-    if (ind > nVars)
-        k = ind - nVars;
-        figure(fig2);
-        axes(ha2(k+(1-1)*nVars));
-    else
-        k = ind;
-        figure(fig1);
-        axes(ha1(k+(1-1)*nVars));
-    end
+fig   = figure('Position', get(0, 'Screensize'));
+[ha, pos] = TightSubplot(2,4,[.01 .001],[.01 .03],[.01 .01]);
+for k = 1:nVars
     curVar  = vars{k};
     if (zBF > size(curVar,3))
         yBFCur = 1 + size(curVar,1)/2;
@@ -85,6 +55,7 @@ for ind = 1:nVars*2
         zBFCur = zBF;
     end
     
+    axes(ha(k+(1-1)*nVars));
     imagesc(squeeze(curVar(yBFCur,:,:))'); axis square off; colormap(colormapSet);
     caxis(colorScale);
     if (zBF > size(curVar,3))
@@ -94,14 +65,8 @@ for ind = 1:nVars*2
         viscircles([256, 256], dz_arc,     'LineWidth', 1.0, 'LineStyle', '-', 'Color', 'yellow');
         viscircles([256, 256], dz_SIM_arc, 'LineWidth', 1.0, 'LineStyle', '-', 'Color', 'green');
     end
-    caxis(colorScale);
-    if (~isempty(colTitles) && ind <= nVars)
+    if (~isempty(colTitles))
         title(colTitles(k));
-    end
-    if (ind > nVars)
-        zoom on
-        zoom(2)
-        zoom off
     end
 end
 if (~isempty(supTitle))

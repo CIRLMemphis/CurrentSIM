@@ -51,14 +51,38 @@ kPhi    = 1;
 recVars{end+1} = HROb;
 
 % add the widefield image
-load(CIRLDataPath + "\Results\OSSRMultiOb\" + expNames(1) + "\" + expNames(1) + ".mat", 'g');
-recVars{end+1} = g(:,:,:,lThe,1) + g(:,:,:,lThe,2) + g(:,:,:,lThe,3) + g(:,:,:,lThe,4) + g(:,:,:,lThe,5);
-recVars{end}   = recVars{end}./sum(recVars{end}(:))*sum(HROb(:));
+% load(CIRLDataPath + "\Results\OSSRMultiOb\" + expNames(1) + "\" + expNames(1) + ".mat", 'g');
+% recVars{end+1} = g(:,:,:,lThe,1) + g(:,:,:,lThe,2) + g(:,:,:,lThe,3) + g(:,:,:,lThe,4) + g(:,:,:,lThe,5);
+% recVars{end}   = recVars{end}./sum(recVars{end}(:))*sum(HROb(:));
+
+% add the 2D-GWF restored image
+FileTif      = 'C:\Users\cvan\OneDrive - The University of Memphis\CIRLData\Results\OSSRMultiOb\FairSim_AutoReconstructionResults.tif';
+InfoImage    = imfinfo(FileTif);
+mImage       = InfoImage(1).Width;
+nImage       = InfoImage(1).Height;
+NumberImages = length(InfoImage);
+reconOb      = zeros(nImage,mImage,NumberImages+floor(NumberImages/2)*2,'uint16');
+for i = 1:NumberImages
+    reconOb(:,:,2*(i-1)+1) = imread(FileTif,'Index',i);
+end
+for i = 2:2:size(reconOb,3)
+    if (i+1 <= size(reconOb,3))
+        reconOb(:,:,i) = (reconOb(:,:,i-1) + reconOb(:,:,i+1))/2;
+    else
+        reconOb(:,:,i) = reconOb(:,:,i-1);
+    end
+end
+reconOb    = double(reconOb);
+reconObNor = reconOb./sum(reconOb(:))*sum(HROb(:));
+reconObNor = permute(reconObNor, [2, 1, 3]);
+recVars{end+1} = reconObNor;
+%recVars{end}   = recVars{end}./sum(recVars{end}(:))*sum(HROb(:));
 
 
 %% add the 3D-MBPC, 3D-MBPCReg results
-MSE  = zeros(length(expNames), 1);
-SSIM = zeros(length(expNames), 1);
+MSE  = zeros(length(expNames) + 1, 1);
+SSIM = zeros(length(expNames) + 1, 1);
+[ MSE(1), SSIM(1) ] = MSESSIM(recVars{end}, norOb); % compute MSE, SSIM of FairSIM.
 for k = 1:length(expNames)
     if (iterInd(k) == 0)
         load(CIRLDataPath + "\Results\OSSRMultiOb\" + expNames(k) + "\" + expNames(k) + ".mat", 'reconOb');
@@ -68,7 +92,7 @@ for k = 1:length(expNames)
         recVars{end+1} = retVars{iterInd(k)}./sum(retVars{iterInd(k)}(:))*sum(HROb(:));
     end
     recVars{end}(recVars{end} < 0) = 0;
-    [ MSE(k), SSIM(k) ] = MSESSIM(recVars{end}, norOb);
+    [ MSE(k+1), SSIM(k+1) ] = MSESSIM(recVars{end}, norOb);
 end
 texRet = MSESSIMtoTex(MSE, SSIM, ["GWF", "MBPC NoReg", "MBPCReg1e5", "MBPCReg1e4 150Iter", "MBPCReg1e4 200Iter"])
 
@@ -87,17 +111,17 @@ MethodCompareFig = OSSRSubplotXZ( recVars, z2BF, y2BF, ...
 
 %% noisy
 cnt    = 1;
-titTxt = ["GWF", "MB", "MBPC"];
-colTxt = ["green", "blue", "red"];
+titTxt = ["FairSIM", "GWF", "MB", "MBPC"];
+colTxt = ["magenta", "green", "blue", "red"];
 yScale = [0 1.2];
 
 ProfileCompareFig = figure('Position', get(0, 'Screensize'));
 [scale01, scaleMicron] = Pixel2Micron(X2, dXY/2);
 subplot(2,1,1);
 plot(squeeze(norOb(y2BF, :, z2BF)), 'DisplayName', 'Truth', 'LineWidth', 2, 'color','black');
-for ind = 3:5
+for ind = 2:5
     norReconOb = recVars{ind};
-    hold on; plot(squeeze(norReconOb(y2BF, :, z2BF)), 'DisplayName', titTxt(ind-2), 'LineWidth', 2, 'color', colTxt(ind-2));
+    hold on; plot(squeeze(norReconOb(y2BF, :, z2BF)), 'DisplayName', titTxt(ind-1), 'LineWidth', 2, 'color', colTxt(ind-1));
 end
 xlabel('x (\mum)'); ylabel('Intensity (a.u.)'); ylim(yScale);xlim([X2/2-4/dXY, X2/2+4/dXY]);
 set(gca,'XTick',scale01);
@@ -108,9 +132,9 @@ set(gca,'FontSize',18)
 %ProfileCompareFig = figure('Position', get(0, 'Screensize'));
 subplot(2,1,2);
 plot(squeeze(norOb(y2BF, y2BF-14, :)), 'DisplayName', 'Truth', 'LineWidth', 2, 'color','black');
-for ind = 3:5
+for ind = 2:5
     norReconOb = recVars{ind};
-    hold on; plot(squeeze(norReconOb(y2BF, y2BF-14, :)), 'DisplayName', titTxt(ind-2), 'LineWidth', 2, 'color', colTxt(ind-2));
+    hold on; plot(squeeze(norReconOb(y2BF, y2BF-14, :)), 'DisplayName', titTxt(ind-1), 'LineWidth', 2, 'color', colTxt(ind-1));
 end
 %suptitle("x, z profiles of different methods for noisy data");
 xlabel('z (\mum)'); ylabel('Intensity (a.u.)'); ylim(yScale); xlim([X2/2-4/dXY, X2/2+4/dXY]);

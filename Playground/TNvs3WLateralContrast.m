@@ -1,6 +1,6 @@
 y       = 0:0.01:5;
 omegaXY = 2;
-iTN     = 1 + cos(2*pi*omegaXY*y);
+iTN     = 1 + 2*cos(2*pi*omegaXY*y);
 i3W     = 1 + 2/3*cos(2*pi*omegaXY*y) + 4/3*cos(2*pi*omegaXY*y/2);
 figure;
 plot(y,iTN,'DisplayName','Tunable');
@@ -9,7 +9,9 @@ plot(y,i3W,'DisplayName','3W');
 legend;
 
 iTNFT = abs(fftshift(fft(iTN)));
+iTNFT = iTNFT/max(iTNFT(:));
 i3WFT = abs(fftshift(fft(i3W)));
+i3WFT = i3WFT/max(i3WFT(:));
 figure;
 plot(y,iTNFT,'DisplayName','Tunable FT');
 hold on;

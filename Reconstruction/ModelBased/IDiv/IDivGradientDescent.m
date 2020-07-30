@@ -42,8 +42,13 @@ recon = initGuess;
 % end
 tic;
 Nm = size(im,6);
-del1    = 0.2;
+del1    = 0.01;
 for it = 1:numIt
+    if (it == 1)
+        del1 = 1e-9;
+    elseif (it == 2)
+        del1 = 0.01;
+    end
     gCur    = ForwardFct(recon, h, im, jm);
     costIn  = g2.*log(g2./gCur) - (g2 - gCur);
     curCrit = sum(costIn(:))/(X*Y*Z);
@@ -86,17 +91,38 @@ for it = 1:numIt
 %     %alpha = -0.01;
     alpha   = 0.0;
     while (alpha == 0.0)
-        gCur    = ForwardFct(recon+del1.*desctDir, h, im, jm);
+        tempObj = recon+del1.*desctDir;
+        if (min(tempObj(:)) <= 0.0)
+            alpha = 0.0;
+            del1 = del1/2;
+            fprintf('Taking half of delta, delta = %d...\n', del1);
+            continue;
+        end
+        gCur    = ForwardFct(tempObj, h, im, jm);
         costIn  = g2.*log(g2./gCur) - (g2 - gCur);
         crit1   = sum(costIn(:))/(X*Y*Z); % cost function at x + delta
         if (curCrit > crit1)
             del2    = 2*del1;
-            gCur    = ForwardFct(recon+del2.*desctDir, h, im, jm);
+            tempObj = recon+del2.*desctDir;
+            if (min(tempObj(:)) <= 0.0)
+                alpha = 0.0;
+                del1 = del1/2;
+                fprintf('Taking half of delta, delta = %d...\n', del1);
+                continue;
+            end
+            gCur    = ForwardFct(tempObj, h, im, jm);
             costIn  = g2.*log(g2./gCur) - (g2 - gCur);
             crit2   = sum(costIn(:))/(X*Y*Z); % cost function at x + 2*delta
         else
             del2    = -del1;
-            gCur    = ForwardFct(recon + del2.*desctDir, h, im, jm);
+            tempObj = recon+del2.*desctDir;
+            if (min(tempObj(:)) <= 0.0)
+                alpha = 0.0;
+                del1 = del1/2;
+                fprintf('Taking half of delta, delta = %d...\n', del1);
+                continue;
+            end
+            gCur    = ForwardFct(tempObj, h, im, jm);
             costIn  = g2.*log(g2./gCur) - (g2 - gCur);
             crit2   = sum(costIn(:))/(X*Y*Z); % cost function at x - delta
         end
@@ -107,7 +133,14 @@ for it = 1:numIt
         rightB = [ curCrit; crit1; crit2];
         coefs  = leftA\rightB;
         minDel = -coefs(2)/(2*coefs(1)); % step size is minimum of quadratic function -b/2a
-        gCur   = ForwardFct(recon+minDel.*desctDir, h, im, jm);
+            tempObj = recon+minDel.*desctDir;
+            if (min(tempObj(:)) <= 0.0)
+                alpha = 0.0;
+                del1 = del1/2;
+                fprintf('Taking half of delta, delta = %d...\n', del1);
+                continue;
+            end
+        gCur   = ForwardFct(tempObj, h, im, jm);
         costIn = g2.*log(g2./gCur) - (g2 - gCur);
         crit3  = sum(costIn(:))/(X*Y*Z); % cost function at x + minDel
 
@@ -115,8 +148,8 @@ for it = 1:numIt
         [~, ind] = min([curCrit, crit1, crit2, crit3]);
         if (ind == 1)
             alpha = 0.0;
-            fprintf('Taking half of delta...\n');
             del1 = del1/2;
+            fprintf('Taking half of delta, delta = %d...\n', del1);
         elseif (ind == 2)
             alpha = del1;
         elseif (ind == 3)

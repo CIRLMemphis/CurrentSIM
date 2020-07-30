@@ -9,11 +9,10 @@ yBest       = 257;
 zBest       = 257;
 
 %% load the reconstruction results
-expNames = ["202005152310_Sim3WOpt1e3GWF3Dp4S6Star256SNR15dB", ...
-            "202005211556_Sim3WOpt1e6GWF3Dp4S6Star256", ...
-            "20200516052932"];
-iterInd  = [0, 0, 4];
-load(CIRLDataPath + "\Results\3Dp4S6Star\" + expNames(1) + "\" + expNames(1) + ".mat",...
+expNames = ["SimTunable11Slits400Nless",...
+            "SimTunable11Slits400Nless"];
+iterInd  = [2, 3];
+load("C:\Users\cvan\OneDrive - The University of Memphis\CIRLData\Jules\" + expNames(1) + ".mat",...
      'X', 'Y', 'Z', 'dXY', 'dZ', 'uc', 'u', 'retVars');
 
 %% load the original high resolution object
@@ -50,36 +49,9 @@ kPhi    = 1;
 recVars{end+1} = HROb;
 
 % add the widefield image
-load(CIRLDataPath + "\Results\3Dp4S6Star\" + expNames(1) + "\" + expNames(1) + ".mat", 'g');
-reconOb        = g(:,:,:,lThe,1) + g(:,:,:,lThe,2) + g(:,:,:,lThe,3) + g(:,:,:,lThe,4) + g(:,:,:,lThe,5);
+load("C:\Users\cvan\OneDrive - The University of Memphis\CIRLData\Jules\" + expNames(1) + ".mat", 'g');
+reconOb        = g(:,:,:,lThe,1) + g(:,:,:,lThe,2) + g(:,:,:,lThe,3);
 recVars{end+1} = reconOb./sum(reconOb(:))*sum(HROb(:));
-
-% add the deconvolved widefield image
-reconOb        = retVars{end-1};
-reconOb(reconOb < 0) = 0;
-recVars{end+1} = reconOb./sum(reconOb(:))*sum(HROb(:));
-
-%% add the 2D-GWF restored image using FairSIM with attenuation
-FileTif      = 'C:\Users\cvan\OneDrive - The University of Memphis\CIRLData\Results\3Dp4S6Star\FairSIM_SNRresult_p10_ap99.tif';
-InfoImage    = imfinfo(FileTif);
-mImage       = InfoImage(1).Width;
-nImage       = InfoImage(1).Height;
-NumberImages = length(InfoImage);
-reconOb      = zeros(nImage,mImage,NumberImages+floor(NumberImages/2)*2,'uint16');
-for i = 1:NumberImages
-    reconOb(:,:,2*(i-1)+1) = imread(FileTif,'Index',i);
-end
-for i = 2:2:size(reconOb,3)
-    if (i+1 <= size(reconOb,3))
-        reconOb(:,:,i) = (reconOb(:,:,i-1) + reconOb(:,:,i+1))/2;
-    else
-        reconOb(:,:,i) = reconOb(:,:,i-1);
-    end
-end
-reconOb    = double(reconOb);
-reconObNor = reconOb./sum(reconOb(:))*sum(HROb(:));
-reconObNor = permute(reconObNor, [2, 1, 3]);
-recVars{end+1} = reconObNor;
 
 %% plot the raw data
 figure;
@@ -87,35 +59,34 @@ subplot(1,2,1); imagesc(squeeze(g(:,:,129,1,1))) ; axis image; colormap gray; xl
 subplot(1,2,2); imagesc(squeeze(g(129,:,:,1,1))'); axis image; colormap gray; xlabel('x'); ylabel('z');
 
 
-%% add the 3D-GWF, 3D-MB, 3D-MBPC results
+%% add the results in expNames
 MSE  = zeros(length(expNames), 1);
 SSIM = zeros(length(expNames), 1);
 for k = 1:length(expNames)
     if (iterInd(k) == 0)
-        load(CIRLDataPath + "\Results\3Dp4S6Star\" + expNames(k) + "\" + expNames(k) + ".mat", 'reconOb');
+        load("C:\Users\cvan\OneDrive - The University of Memphis\CIRLData\Jules\" + expNames(1) + ".mat", 'reconOb');
         recVars{end+1} = reconOb./sum(reconOb(:))*sum(HROb(:));
     else
-        load(CIRLDataPath + "\Results\3Dp4S6Star\" + expNames(k) + "\" + expNames(k) + ".mat", 'retVars');
+        load("C:\Users\cvan\OneDrive - The University of Memphis\CIRLData\Jules\" + expNames(1) + ".mat", 'retVars');
         recVars{end+1} = retVars{iterInd(k)}./sum(retVars{iterInd(k)}(:))*sum(HROb(:));
     end
     recVars{end}(recVars{end} < 0) = 0;
     [ MSE(k), SSIM(k) ] = MSESSIM(recVars{end}, norOb);
 end
-texRet = MSESSIMtoTex(MSE, SSIM, ["GWF1e3 15dB", "GWF1e2 15dB", "MBPCReg1e5, 200Iter"])
+texRet = MSESSIMtoTex(MSE, SSIM, ["MB 200Iter", "MB 300Iter"])
 
 %%
 colormapSet = 'gray';
 MethodCompareFig = OSSRSubplot( recVars, z2BF, y2BF, ...
                                 ...["True Object", "Widefield", "3D-GWF Deconvolved WF", "FairSIM, OTF atten", "FairSIM, no OTF atten", "3D-GWF, 1e-3", "3D-GWF, 1e-2", "MBPCReg1e5, 200Iter"],...
-                                ["True Object", "Widefield", "3D-GWF Deconvolved WF", "FairSIM, 1e-1, a 0.99", "3D-GWF, 1e-3", "3D-GWF, 1e-2", "MBPCReg1e5, 150Iter"],...
+                                ["True Object", "Widefield", "MB 200Iter", "MB 300Iter"],...
                                 [],...
                                 colormapSet, xyRegionX, xyRegionY, xzRegionX, xzRegionZ, colorScale);
-saveas(MethodCompareFig, "3W2P15dBBestMethodComparison.jpg");
 
 %% profile comparison on XY plane
-profInd = [1, 4, 6, 7];
-profTxt = {"Truth", "FairSIM", "3D-GWF", "3D-MBPC"};
-profColor = {'k', 'y', 'g', 'r'};
+profInd = [1, 3, 4];
+profTxt = {"Truth", "MB 200Iter", "MB 300Iter"};
+profColor = {'k', 'y', 'g'};
 
 amp  = 40;
 offX = 256;

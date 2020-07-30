@@ -15,4 +15,4 @@ save(CIRLDataPath + "/FairSimData/OMX_U2OS_Actin_525nm.mat", 'g');
 
 %%
 curSlice = g(:,:,zBF,:,:);
-figure;imagesc(squeeze(curSlice(:,:,1,1,1))); axis square; colorbar;
+figure;imagesc(squeeze(curSlice(512-128:512,1:128,1,2,1))); axis square; colorbar;
