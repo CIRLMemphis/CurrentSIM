@@ -20,8 +20,9 @@ subplot(2,2,4); imagesc(squeeze(g(257,1:256,:,1,2))'); axis image  off; xlabel('
 print(gcf,"U2OSForward.png",'-dpng','-r300');
 
 %% load the reconstruction results
-expNames = ["202004231618_Exp3WU2OSMitoPSFVzMBPC"];
-iterInd  = [6];
+expNames = ["202005192034_Exp3WU2OSMitoOptGWF",...
+            "202004231618_Exp3WU2OSMitoPSFVzMBPC"];
+iterInd  = [0, 6];
 load(CIRLDataPath + "/Results/U2OSMito/" + expNames(1) + "/" + expNames(1) + ".mat",...
      'X', 'Y', 'Z', 'dXY', 'dZ', 'reconOb', 'retVars');
  
@@ -30,9 +31,9 @@ load(CIRLDataPath + "/Results/U2OSMito/" + expNames(1) + "/" + expNames(1) + ".m
 % WFNor(WFNor < 0) = 0;
 % WFNor = WFNor/max(WFNor(:));
 % 
-% GWFObNor = reconOb./sum(reconOb(:));
-% GWFObNor(GWFObNor < 0) = 0;
-% GWFObNor = GWFObNor/max(GWFObNor(:));
+GWFObNor = reconOb./sum(reconOb(:));
+GWFObNor(GWFObNor < 0) = 0;
+GWFObNor = GWFObNor/max(GWFObNor(:));
 
 %% load the 2D-GWF reconstruction results
 FileTif      = char(CIRLDataPath + "/Results/U2OSMito/FairSIM.tif");
@@ -53,7 +54,9 @@ reconObNor = reconObNor/max(reconObNor(:));
 widefieldNor = reconObNor;
  
 %%
-reconOb = retVars{iterInd(1)};
+load(CIRLDataPath + "/Results/U2OSMito/" + expNames(2) + "/" + expNames(2) + ".mat",...
+     'X', 'Y', 'Z', 'dXY', 'dZ', 'reconOb', 'retVars');
+reconOb = retVars{iterInd(2)};
 MBObNor = reconOb./sum(reconOb(:));
 MBObNor(MBObNor < 0) = 0;
 MBObNor = MBObNor/max(MBObNor(:));
@@ -63,11 +66,11 @@ MBObNor = MBObNor/max(MBObNor(:));
 
 fh = figure();
 fh.WindowState = 'maximized';
-subplot(1,2,1); imagesc(widefieldNor(:, :,zBest)); axis image; axis off; caxis(colorScale); colormap(colormapSet); xlabel('x'); ylabel('y');
+subplot(1,3,1); imagesc(widefieldNor(:, :,zBest)); axis image; axis off; caxis(colorScale); colormap(colormapSet); xlabel('x'); ylabel('y');
 title('2D-GWF Full');
-% subplot(1,4,2); imagesc(GWFObNor    (:, :,zBest)); axis image; axis off; caxis(colorScale); colormap(colormapSet); xlabel('x'); ylabel('y');
-% title('3D-GWF Full');
-subplot(1,2,2); imagesc(MBObNor     (:, :,zBest)); axis image; axis off; caxis(colorScale); colormap(colormapSet); xlabel('x'); ylabel('y');
+subplot(1,3,2); imagesc(GWFObNor    (:, :,zBest)); axis image; axis off; caxis(colorScale); colormap(colormapSet); xlabel('x'); ylabel('y');
+title('3D-GWF Full');
+subplot(1,3,3); imagesc(MBObNor     (:, :,zBest)); axis image; axis off; caxis(colorScale); colormap(colormapSet); xlabel('x'); ylabel('y');
 title('3D-MB Full');
 % subplot(1,4,4); imagesc(MB7ObNor    (:, :,zBest)); axis image; axis off; caxis(colorScale); colormap(colormapSet); xlabel('x'); ylabel('y');
 % title('3D-MB7 Full');
