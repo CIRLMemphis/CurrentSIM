@@ -12,6 +12,6 @@ module purge
 module load matlab
 
 # run matlab program via the run_matlab script
-logFile=Exp3WLSECActinPSFVzMBPC.log
-mFile=Exp3WLSECActinPSFVzMBPC.m
+logFile=Exp3WLSECActinPSFVzMBPCDR_jmDouble.log
+mFile=Exp3WLSECActinPSFVzMBPCDR_jmDouble.m
 /public/apps/matlab/R2018a/bin/matlab -nodisplay -nosplash -nodesktop -logfile $logFile -r "run $mFile;quit;"
