@@ -205,6 +205,10 @@ xlabel('z'); ylabel('value'); suptitle("Visibility and PSF"); legend; axis squar
 %%
 h  = hNew;
 vz = vzNew;
+vznew(:,:,:,1) = ones(size(vz));
+vznew(:,:,:,2) = ones(size(vz));
+vznew(:,:,:,3) = vz;
+vz = vznew;
 save(char(CIRLDataPath + "/FairSimOTFs/splinePSF_" + X + "_" + Y + "_" + newZ + ".mat"), 'h');
 save(char("LSECActin_vz.mat"), 'vz');
 
