@@ -83,7 +83,8 @@ dUV_ref = str2num(s.fairsim.otf3d.data.cycles_dash_lateral.Text);
 
 X   = 512*2;
 Y   = 512*2;
-Z   = 7+6;
+%Z   = 7+6;
+Z   = 43;
 dXY = 0.08/2;
 dZ  = 0.125/2;
 dUV = 1/X/dXY;
@@ -190,8 +191,22 @@ figure;  plot(squeeze(vz), 'DisplayName', 'v(z)');
 hold on; plot(hz, 'DisplayName', 'h(z)'); 
 xlabel('z'); ylabel('value'); suptitle("Visibility and PSF"); legend; axis square;
 
+%% drop the middle part of h and vz
+newZ    = 13;
+midNewZ = round(newZ/2);
+hNew    = h(:,:,Zcor-midNewZ+1:Zcor+midNewZ-1);
+hzNew   = squeeze(hNew(midY,midX,:));
+hzNew   = hzNew./max(hzNew(:));
+vzNew   = vz(:,:,Zcor-midNewZ+1:Zcor+midNewZ-1);
+figure;  plot(squeeze(vzNew), 'DisplayName', 'v(z)'); 
+hold on; plot(hzNew, 'DisplayName', 'h(z)'); 
+xlabel('z'); ylabel('value'); suptitle("Visibility and PSF"); legend; axis square;
+
 %%
-save(char(CIRLDataPath + "/FairSimOTFs/splinePSF_" + X + "_" + Y + "_" + Z + ".mat"), 'h');
+h  = hNew;
+vz = vzNew;
+save(char(CIRLDataPath + "/FairSimOTFs/splinePSF_" + X + "_" + Y + "_" + newZ + ".mat"), 'h');
+save(char("LSECActin_vz.mat"), 'vz');
 
 %%
 Hn = zeros(X, Y, Z, 5);
