@@ -63,6 +63,12 @@ for it = 1:numIt
     end
     crit = crit + dot(diff(:), diff(:));
     grad = -real(4.*xi.*grad);
+    
+    if penalizationParam ~= -1
+        crit = crit + penalizationParam*dot(xi(:).^2, xi(:).^2);
+        grad = grad + 4*penalizationParam*xi.^3;
+    end
+    
     if (it == 1)
         memGrad  =  grad;
         desctDir = -grad;
