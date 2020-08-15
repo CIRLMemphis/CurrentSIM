@@ -13,9 +13,9 @@ zBest       = 11;
 load(CIRLDataPath + "/FairSimData/OMX_LSEC_Actin_525nm.mat", 'g');
 fh = figure();
 fh.WindowState = 'maximized';
-subplot(1,3,1); imagesc(g(256:end,256:end,6,1,1)); axis square off; xlabel('x'); ylabel('y'); title('g1'); colormap(colormapSet);
-subplot(1,3,2); imagesc(g(256:end,256:end,6,2,1)); axis square off; xlabel('x'); ylabel('y'); title('g2'); colormap(colormapSet);
-subplot(1,3,3); imagesc(g(256:end,256:end,6,3,1)); axis square off; xlabel('x'); ylabel('y'); title('g3'); colormap(colormapSet);
+subplot(1,3,1); imagesc(g(256:end,256:end,6,1,1)); axis square off; xlabel('x'); ylabel('y'); title('g1'); colormap(colormapSet); caxis([0 10000]);
+subplot(1,3,2); imagesc(g(256:end,256:end,6,2,1)); axis square off; xlabel('x'); ylabel('y'); title('g2'); colormap(colormapSet); caxis([0 10000]);
+subplot(1,3,3); imagesc(g(256:end,256:end,6,3,1)); axis square off; xlabel('x'); ylabel('y'); title('g3'); colormap(colormapSet); caxis([0 10000]);
 
 %% load the reconstruction results
 expNames = ["202008071619_Exp3WLSECActinPSFVzMBPC_jmDouble_Reg1e4", ...
@@ -31,28 +31,28 @@ FairSIMRes  = FairSIMRes/max(FairSIMRes(:));
 
 %% load the MBPC results
 load(CIRLDataPath + "/Results/LSECActin/" + expNames(1) + "/" + expNames(1) + ".mat",...
-     'X', 'Y', 'Z', 'dXY', 'dZ', 'reconOb');
+     'X', 'Y', 'Z', 'dXY', 'dZ', 'retVars');
  
 %%
-MBPCObNor = reconOb;
+MBPCObNor = retVars{5};
 MBPCObNor(MBPCObNor < 0) = 0;
 MBPCObNor = MBPCObNor/max(MBPCObNor(:));
 
 %% load the MBPC7 (7 out of 15) results
 load(CIRLDataPath + "/Results/LSECActin/" + expNames(2) + "/" + expNames(2) + ".mat",...
-     'X', 'Y', 'Z', 'dXY', 'dZ', 'reconOb');
+     'X', 'Y', 'Z', 'dXY', 'dZ', 'retVars');
  
 %%
-MBPC7ObNor = reconOb;
+MBPC7ObNor = retVars{6};
 MBPC7ObNor(MBPC7ObNor < 0) = 0;
 MBPC7ObNor = MBPC7ObNor/max(MBPC7ObNor(:));
 
 %% load the MBPC9 (9 out of 15) results
 load(CIRLDataPath + "/Results/LSECActin/" + expNames(3) + "/" + expNames(3) + ".mat",...
-     'X', 'Y', 'Z', 'dXY', 'dZ', 'reconOb');
+     'X', 'Y', 'Z', 'dXY', 'dZ', 'retVars');
  
 %%
-MBPC9ObNor = reconOb;
+MBPC9ObNor = retVars{6};
 MBPC9ObNor(MBPC9ObNor < 0) = 0;
 MBPC9ObNor = MBPC9ObNor/max(MBPC9ObNor(:));
 
