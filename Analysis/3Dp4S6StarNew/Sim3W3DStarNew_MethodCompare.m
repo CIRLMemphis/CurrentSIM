@@ -69,7 +69,9 @@ nImage       = InfoImage(1).Height;
 NumberImages = length(InfoImage);
 reconOb      = zeros(nImage,mImage,NumberImages+floor(NumberImages/2)*2,'uint16');
 for i = 1:NumberImages
-    reconOb(:,:,2*(i-1)+1) = imread(FileTif,'Index',i);
+    temp = imread(FileTif,'Index',i);
+    temp = temp/max(temp(:));
+    reconOb(:,:,2*(i-1)+1) = temp;
 end
 for i = 2:2:size(reconOb,3)
     if (i+1 <= size(reconOb,3))
@@ -84,8 +86,9 @@ recVars{end+1} = reconOb./sum(reconOb(:))*sum(HROb(:));
 
 
 %% add the 3D-GWF, 3D-MB, 3D-MBPC results
-MSE  = zeros(length(expNames), 1);
-SSIM = zeros(length(expNames), 1);
+MSE  = zeros(length(expNames)+1, 1);
+SSIM = zeros(length(expNames)+1, 1);
+[MSE(1), SSIM(1)] =  MSESSIM(recVars{end}, norOb);
 for k = 1:length(expNames)
     if (iterInd(k) == 0)
         load(CIRLDataPath + "\Results\3Dp4S6StarNew\" + expNames(k) + "\" + expNames(k) + ".mat", 'reconOb');
@@ -95,9 +98,9 @@ for k = 1:length(expNames)
         recVars{end+1} = retVars{iterInd(k)}./sum(retVars{iterInd(k)}(:))*sum(HROb(:));
     end
     recVars{end}(recVars{end} < 0) = 0;
-    [ MSE(k), SSIM(k) ] = MSESSIM(recVars{end}, norOb);
+    [ MSE(k+1), SSIM(k+1) ] = MSESSIM(recVars{end}, norOb);
 end
-texRet = MSESSIMtoTex(MSE, SSIM, ["3D-GWF", "MBPC 15dB, Iter300"])
+texRet = MSESSIMtoTex(MSE, SSIM, ["2D-FairSIM", "3D-GWF", "3D-MBPC, Iter300"])
 
 %%
 colormapSet = 'gray';
@@ -168,10 +171,10 @@ dz_SIM_arc = dz_SIM*(6*4)/(2*pi*dZ);
 % profColor = {'k', 'm', 'r'};
 % lineStyle = {'-', '-.', '-'};
 
-profInd = [1, 3, 4, 5];
-profTxt = {"Truth", "2D-FairSIM", "3D-GWF", "3D-MBPC"};
-profColor = {'k', "b", 'm', 'r'};
-lineStyle = {'-', '--', '-.', '-'};
+profInd = [1, 2, 3, 4, 5];
+profTxt = {"Truth", "Deconv WF", "2D-FairSIM", "3D-GWF", "3D-MBPC"};
+profColor = {'k', 'g', "b", 'm', 'r'};
+lineStyle = {'-', ':', '--', '-.', '-'};
 
 %profTxt = {"Truth", "GWF 20dB", "GWF 15dB", "GWF 10dB"};
 %profColor = {'k', 'r', 'm', 'g'};
@@ -190,7 +193,7 @@ for resolution = [dx, dx_SIM]
     sampleN = 500;
 
     figure('Position', get(0, 'Screensize'));
-    [ha, pos] = TightSubplot(2,length(profInd),[.01 .001],[.01 .03],[.11 .11]);
+    [ha, pos] = TightSubplot(2,length(profInd),[.01 .001],[.2 .2],[.11 .11]);
     for ind = 1:length(profInd)
         axes(ha(ind+(1-1)*length(profInd)));
         imagesc(squeeze(recVars{profInd(ind)}(:,:,257,1,1))) ; axis image off; colormap gray; xlabel('x'); ylabel('y');
@@ -231,6 +234,7 @@ for resolution = [dx, dx_SIM]
     end
     %axes(ha(4:6));
     %figure('Position', get(0, 'Screensize'));
+    h1 = subplot(2,length(profInd),6); delete(h1);
     subplot(2,length(profInd),length(profInd)+1:length(profInd)*2); 
     lblInd = [1, 25, 48, 72, 101, 131];
     for ind = 1:length(profInd)
@@ -257,7 +261,7 @@ for resolution = [dz, dz_SIM]
     sampleN = 500;
 
     figure('Position', get(0, 'Screensize'));
-    [ha, pos] = TightSubplot(2,length(profInd),[.01 .001],[.01 .03],[.11 .11]);
+    [ha, pos] = TightSubplot(2,length(profInd),[.01 .001],[.2 .2],[.11 .11]);
     for ind = 1:length(profInd)
         axes(ha(ind+(1-1)*length(profInd)));
         imagesc(squeeze(recVars{profInd(ind)}(257,:,:,1,1))') ; axis image off; colormap gray; xlabel('x'); ylabel('y');
@@ -298,7 +302,8 @@ for resolution = [dz, dz_SIM]
     end
     %axes(ha(4:6));
     %figure('Position', get(0, 'Screensize'));
-    subplot(2,length(profInd),length(profInd)+1:length(profInd)*2); 
+    h1 = subplot(2,length(profInd),6); delete(h1);
+    subplot(2,length(profInd),length(profInd)+2:length(profInd)*2-1); 
     lblInd = [1, 25, 48, 72, 101, 131];
     for ind = 1:length(profInd)
         %hold on; plot(radVal/(6*4)*(2*pi*0.02)*1000, resVal{ind},'LineWidth',3,'DisplayName',profTxt{ind}, 'Color', profColor{ind});

@@ -1,5 +1,5 @@
 run("../../../CIRLSetup.m");
-colormapSet = 'jet';
+colormapSet = 'hot';
 colorScale  = [0 1.0];
 shouldScale = 0;
 xzRegionX   = 450:650;
