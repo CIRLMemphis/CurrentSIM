@@ -70,7 +70,7 @@ NumberImages = length(InfoImage);
 reconOb      = zeros(nImage,mImage,NumberImages+floor(NumberImages/2)*2,'uint16');
 for i = 1:NumberImages
     temp = imread(FileTif,'Index',i);
-    temp = temp/max(temp(:));
+    %temp = temp/max(temp(:));
     reconOb(:,:,2*(i-1)+1) = temp;
 end
 for i = 2:2:size(reconOb,3)
@@ -189,24 +189,11 @@ for resolution = [dx, dx_SIM]
     amp = resolution*(6*4)/(2*pi*dZ);
     offX = 256;
     offY = 256;
-    sampleN = 500;
+    sampleN = 400;
+    theta = linspace(pi/2+pi/4, 3*pi/2-pi/4, sampleN);
 
     figure('Position', get(0, 'Screensize'));
-    [ha, pos] = TightSubplot(2,length(profInd),[.01 .001],[.2 .2],[.11 .11]);
-    for ind = 1:length(profInd)
-        axes(ha(ind+(1-1)*length(profInd)));
-        imagesc(squeeze(recVars{profInd(ind)}(:,:,257,1,1))) ; axis image off; colormap gray; xlabel('x'); ylabel('y');
-        caxis(colorScale);
-        zoom on
-        zoom(3)
-        zoom off
-        theta = linspace(pi/2, 3*pi/2, sampleN);
-        % r = amp*(1-2.5*sin(theta));
-        r = amp;
-        hold on; plot(offX+(r.*cos(theta)), offY+(r.*sin(theta)),'LineWidth',3,'Color', x_color{cnt});
-        title(profTxt{ind});
-    end
-
+    
     resVal = {};
     obVal  = [];
     curX   = 0;
@@ -231,21 +218,18 @@ for resolution = [dx, dx_SIM]
         end
         resVal{end+1} = vals;
     end
-    %axes(ha(4:6));
-    %figure('Position', get(0, 'Screensize'));
-    h1 = subplot(2,length(profInd),6); delete(h1);
-    subplot(2,length(profInd),length(profInd)+1:length(profInd)*2); 
-    lblInd = [1, 25, 48, 72, 101, 131];
+    lblInd = [1, 61, 129, 196, 263, 331, 400];
     for ind = 1:length(profInd)
         %hold on; plot(radVal/(6*4)*(2*pi*0.02)*1000, resVal{ind},'LineWidth',3,'DisplayName',profTxt{ind}, 'Color', profColor{ind});
         hold on; plot(smooth(resVal{ind}, 9), lineStyle{ind},'LineWidth',3,'DisplayName',profTxt{ind}, 'Color', profColor{ind});
-        %set(gca,'XTick', lblInd );
-        %set(gca,'XTickLabel', round(radVal(lblInd)/(6*4)*(2*pi*0.02)*1000));
-        xlim([0 length(smooth(resVal{ind}))])
-        set(gca,'XTick',[]);
-        %ylabel('Intensity'); xlabel("At resolution " + amp + " (nm)");
+        set(gca,'XTick', lblInd );
+        set(gca,'XTickLabel', round((lblInd-1)*2*pi*amp/4/400*dXY*1000));
+        xlim([0 length(resVal{ind})])
+        %set(gca,'XTick',[]);
+        ylabel('Intensity'); xlabel("Distance along the arc (nm)");
     end
-    legend; title("Profile along the " + dx_lbl{cnt} + " arc at resolution " + resolution*1000 + " nm");
+    legend;
+    %title("Profile along the " + dx_lbl{cnt} + " arc at resolution " + resolution*1000 + " nm");
     cnt = cnt + 1;
 end
 
@@ -257,24 +241,11 @@ for resolution = [dz, dz_SIM]
     amp = resolution*(6*4)/(2*pi*dZ);
     offX = 256;
     offY = 256;
-    sampleN = 500;
+    sampleN = 400;
+    theta = linspace(pi/2+pi/4, 3*pi/2-pi/4, sampleN);
 
     figure('Position', get(0, 'Screensize'));
-    [ha, pos] = TightSubplot(2,length(profInd),[.01 .001],[.2 .2],[.11 .11]);
-    for ind = 1:length(profInd)
-        axes(ha(ind+(1-1)*length(profInd)));
-        imagesc(squeeze(recVars{profInd(ind)}(257,:,:,1,1))') ; axis image off; colormap gray; xlabel('x'); ylabel('y');
-        caxis(colorScale);
-        theta = linspace(pi/2+pi/4, 3*pi/2-pi/4, sampleN);
-        zoom on
-        zoom(2)
-        zoom off
-        % r = amp*(1-2.5*sin(theta));
-        r = amp;
-        hold on; plot(offX+(r.*cos(theta)), offY+(r.*sin(theta)),'LineWidth',3,'Color', x_color{cnt});
-        title(profTxt{ind});
-    end
-
+    
     resVal = {};
     obVal  = [];
     curX   = 0;
@@ -301,18 +272,17 @@ for resolution = [dz, dz_SIM]
     end
     %axes(ha(4:6));
     %figure('Position', get(0, 'Screensize'));
-    h1 = subplot(2,length(profInd),6); delete(h1);
-    subplot(2,length(profInd),length(profInd)+2:length(profInd)*2-1); 
-    lblInd = [1, 25, 48, 72, 101, 131];
+    lblInd = [1, 61, 129, 196, 263, 331, 400];
     for ind = 1:length(profInd)
         %hold on; plot(radVal/(6*4)*(2*pi*0.02)*1000, resVal{ind},'LineWidth',3,'DisplayName',profTxt{ind}, 'Color', profColor{ind});
         hold on; plot(smooth(resVal{ind}), lineStyle{ind},'LineWidth',3,'DisplayName',profTxt{ind}, 'Color', profColor{ind});
-        %set(gca,'XTick', lblInd );
-        %set(gca,'XTickLabel', round(radVal(lblInd)/(6*4)*(2*pi*0.02)*1000));
+        set(gca,'XTick', lblInd );
+        set(gca,'XTickLabel', round((lblInd-1)*2*pi*amp/4/400*dXY*1000));
         xlim([0 length(smooth(resVal{ind}))])
-        set(gca,'XTick',[]);
-        %ylabel('Intensity'); xlabel("At resolution " + amp + " (nm)");
+        %set(gca,'XTick',[]);
+        ylabel('Intensity'); xlabel("Distance along the arc (nm)");
     end
-    legend; title("Profile along the " + dx_lbl{cnt} + " arc at resolution " + resolution*1000 + " nm");
+    legend;
+    %title("Profile along the " + dx_lbl{cnt} + " arc at resolution " + resolution*1000 + " nm");
     cnt = cnt + 1;
 end

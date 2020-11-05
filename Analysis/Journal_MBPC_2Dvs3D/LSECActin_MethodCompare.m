@@ -1,6 +1,6 @@
 run("../../CIRLSetup.m");
 colormapSet = 'gray';
-colorScale  = [0 1.2];
+colorScale  = [0 1];
 xzRegionX   = 257-100:257+99;
 xzRegionZ   = 257-100:257+99;
 xyRegionX   =   513+256+100:1024-60;
@@ -50,8 +50,17 @@ for k = 1:length(expNames)
         load(CIRLDataPath + "\Results\LSECActin\" + expNames(k) + "\" + expNames(k) + ".mat", 'retVars');
         recVars{end+1} = retVars{iterInd(k)};
     end
-    recVars{end}(recVars{end} < 0) = 0;
+    %recVars{end}(recVars{end} < 0) = 0;
 end
+
+%% normalization
+for k = 1:length(recVars)-1
+    recVars{k}   = recVars{k}./sum(recVars{k}(:))*sum(recVars{end}(:));
+    recVars{k}(recVars{k} < 0) = 0;
+    recVars{k}   = recVars{k}./max(recVars{k}(:));
+end
+recVars{end}(recVars{end} < 0) = 0;
+recVars{end} = recVars{end}./max(recVars{end}(:));
 
 
 %% corner xy field of view

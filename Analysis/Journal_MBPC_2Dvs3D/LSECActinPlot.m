@@ -27,8 +27,12 @@ for k = 1:nVars
 %     end
     
         axes(ha(k+(1-1)*nVars));
-        imagesc(curVar(xyRegionXCur,xyRegionYCur,zBFCur)); axis square off; colormap(colormapSet); 
-        %caxis(colorScale);
+        if (k == nVars)
+            imagesc(curVar(xyRegionXCur,xyRegionYCur,zBFCur-1)); axis square off; colormap(colormapSet); 
+        else
+            imagesc(curVar(xyRegionXCur,xyRegionYCur,zBFCur)); axis square off; colormap(colormapSet);
+        end
+        caxis(colorScale);
 
     if 0
     axes(ha(k+(3-1)*nVars));
