@@ -1,5 +1,5 @@
 %%
-run("../../../../CIRLSetup.m");
+run("../../../../../CIRLSetup.m");
 close all
 %% Simulated Tunable settings
 [ psfpar, psfpari ] = PSFConfigNoAber();
