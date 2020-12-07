@@ -1,8 +1,8 @@
 %% load the experiment setup (in this case it is simulated setup)
-run("../SimTunable9SlitsStarlike256SetupU08.m");
+run("../SimTunable3SlitsStarlike256SetupU08.m");
 
 %% load the collected data (in this case simulated data)
-matFile = CIRLDataPath + "/Simulation/Starlike/SNR10dBSimTun9Slits122StarlikeU08.mat";
+matFile = CIRLDataPath + "/Simulation/Starlike/SNR10dBSimTun3Slits488StarlikeU08.mat";
 load(matFile, 'g');
 
 %% double the grid size
@@ -22,11 +22,11 @@ picIn   = 50;
                                  @HotGradient, ...
                                  @HotStepSize, ...
                                  @UpSampling, ...
-                                 @imTunable9Slits,...
+                                 @imTunable3Slits,...
                                  @jmTunable,...
                                  g, h, dXY2, dZ2, 2, omegaXY, omegaZ, theta, phi, offs, phizDeg,...
                                  numIt, -1 ,-1, -1, picIn, -1);
 
 %% save data
-reconData = CIRLDataPath + "/GeneratedReport/Starlike/9Slits/SimTunableMB9Slits122SNR10dBU08.mat";
+reconData = CIRLDataPath + "/GeneratedReport/Starlike/3Slits/SimTunableMB3Slits488SNR10dBU08.mat";
 save(reconData, '-v7.3');

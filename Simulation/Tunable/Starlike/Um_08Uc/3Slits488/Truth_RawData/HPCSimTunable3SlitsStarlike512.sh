@@ -12,6 +12,6 @@ module purge
 module load matlab
 
 # run matlab program via the run_matlab script
-logFile=SimTunable9SlitsStarlike512U08.log
-mFile=SimTunable9SlitsStarlike512U08.m
+logFile=SimTunable3SlitsStarlike512U08.log
+mFile=SimTunable3SlitsStarlike512U08.m
 /public/apps/matlab/R2018a/bin/matlab -nodisplay -nosplash -nodesktop -logfile $logFile -r "run $mFile;quit;"

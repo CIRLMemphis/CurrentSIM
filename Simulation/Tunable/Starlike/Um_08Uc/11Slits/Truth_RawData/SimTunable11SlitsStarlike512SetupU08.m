@@ -22,7 +22,7 @@ omegaZ  = ((x0*fL2)/(2*fL1*fMO))*omegaXY;
 phizDeg = 145.0;
 Nslits  = 11;
 %% get the pattern and check
-zBF = 1 + Z/2;
+zBF = 1 +Z/2;
 p   = psfpar.initialize(psfpar, 'Vectorial', 200);
 h   = PSFAgard(X, Z, dXY, dZ);
 [im, jm, Nn] = PatternTunable3DNSlits(X, Y, Z, omegaXY, omegaZ, dXY, dZ, phi, offs, theta, phizDeg, Nslits);

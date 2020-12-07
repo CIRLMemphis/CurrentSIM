@@ -1,5 +1,5 @@
-run("SimTunable9SlitsStarlike512SetupU08.m");
-matFile = CIRLDataPath + "/Simulation/Starlike/SimTunable9SlitsStarlike512U08.mat";
+run("SimTunable3SlitsStarlike512SetupU08.m");
+matFile = CIRLDataPath + "/Simulation/Starlike/SimTunable3SlitsStarlike512U08.mat";
 
 %% run forward model and save the results into CIRLDataPath
 ob  = StarLikeSample(3,512,6,20,3,0.6);
@@ -8,7 +8,7 @@ g   = gIn;
 save(matFile, '-v7.3', 'g', 'ob');
 
 %% get 256 data
-matFile = CIRLDataPath + "/Simulation/Starlike/SimTunable9SlitsStarlike256U08.mat";
+matFile = CIRLDataPath + "/Simulation/Starlike/SimTunable3SlitsStarlike256U08.mat";
 gIn = gIn(1:2:end, 1:2:end, 1:2:end, :,:);
 g   = gIn;
 save(matFile, '-v7.3', 'g');
@@ -22,7 +22,7 @@ for l = 1:size(g,4)
     end
 end
 %% save the noisy data
-matFile = CIRLDataPath + "/Simulation/Starlike/SNR20dBSimTun9Slits122StarlikeU08.mat";
+matFile = CIRLDataPath + "/Simulation/Starlike/SNR20dBSimTun3Slits488StarlikeU08.mat";
 save(matFile, '-v7.3', 'g');
 
 %% add 15dB Poisson noise
@@ -34,7 +34,7 @@ for l = 1:size(g,4)
     end
 end
 %% save the noisy data
-matFile = CIRLDataPath + "/Simulation/Starlike/SNR15dBSimTun9Slits122StarlikeU08.mat";
+matFile = CIRLDataPath + "/Simulation/Starlike/SNR15dBSimTun3Slits488StarlikeU08.mat";
 save(matFile, '-v7.3', 'g');
 
 %% add 10dB Poisson noise
@@ -46,5 +46,5 @@ for l = 1:size(g,4)
     end
 end
 %% save the noisy data
-matFile = CIRLDataPath + "/Simulation/Starlike/SNR10dBSimTun9Slits122StarlikeU08.mat";
+matFile = CIRLDataPath + "/Simulation/Starlike/SNR10dBSimTun3Slits488StarlikeU08.mat";
 save(matFile, '-v7.3', 'g');

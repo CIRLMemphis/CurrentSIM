@@ -124,4 +124,3 @@ semilogy( info.err(:,3)-f,'o-' ); xlabel('iteration'); ylabel('relative error in
 else
     disp('Something didn''t work right :-(  ');
 end
-

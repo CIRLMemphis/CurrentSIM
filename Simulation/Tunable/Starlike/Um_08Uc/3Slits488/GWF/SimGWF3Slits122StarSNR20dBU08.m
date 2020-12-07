@@ -1,8 +1,8 @@
 %% load the experiment setup (in this case it is simulated setup)
-run("../SNR20dB9Slits122MBPCStarlikeU08.m");
+run("../SNR20dB3Slits488MBPCStarlikeU08.m");
 
 %% load the collected data (in this case simulated data)
-matFile = CIRLDataPath + "/Simulation/Starlike/SNR20dBSimTun9Slits122StarlikeU08.mat";
+matFile = CIRLDataPath + "/Simulation/Starlike/SNR20dBSimTun3Slits488StarlikeU08.mat";
 
 %% run RunReconstruction
 wD     = 0.001;
@@ -36,4 +36,4 @@ RunReconstruction(...
             'reconArgs',        {"g", "h", "im", "uc", "u", "phi", "offs", "theta", "wD", "dXY", "dZ", cutoff, A, sigma, 1},...
             ...
             'reportFolder',     CIRLReportPath,...
-            'reportFile',       "SimGWF9Slits122StarSNR20dBU08.tex")
+            'reportFile',       "SimGWF3Slits488StarSNR20dBU08.tex")
