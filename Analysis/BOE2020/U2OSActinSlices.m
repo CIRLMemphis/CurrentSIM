@@ -1,9 +1,9 @@
-function fig = LSECActinSlices(vars, zBF, yBF, colTitles, supTitle, colormapSet, xyRegionX, xyRegionY, xzRegionX, xzRegionZ, colorScale)
+function fig = U2OSActinSlices(vars, zBF, yBF, colTitles, supTitle, colormapSet, xyRegionX, xyRegionY, xzRegionX, xzRegionZ, colorScale)
 nVars = length(vars);
 
 for k = 2:nVars
     fig   = figure('Position', get(0, 'Screensize'));
-    [ha, pos] = TightSubplot(1,7,[.01 .001],[.01 .03],[.01 .01]);
+    [ha, pos] = TightSubplot(1,3,[.01 .001],[.01 .03],[.01 .01]);
     curVar  = vars{k};
     if (zBF > size(curVar,3))
         yBFCur = 1 + round(size(curVar,1)/2);
@@ -27,9 +27,12 @@ for k = 2:nVars
 %         title(colTitles(k));
 %     end
     
-    for i = 1:7
-        ind = zBFCur-4+i;
-        axes(ha(i));
+    for i = 1:2:5
+        ind = zBFCur-3+i;
+        if (k == nVars)
+            ind = ind - 1;
+        end
+        axes(ha(round(i/2)));
         imagesc(curVar(xyRegionXCur,xyRegionYCur,ind)); axis square off; colormap(colormapSet); 
         caxis(colorScale);
     end

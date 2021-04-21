@@ -20,8 +20,8 @@ subplot(2,2,4); imagesc(squeeze(g(257,1:256,:,1,2))'); axis image  off; xlabel('
 print(gcf,"U2OSForward.png",'-dpng','-r300');
 
 %% load the reconstruction results
-expNames = ["202005192034_Exp3WU2OSMitoOptGWF",...
-            "202004231618_Exp3WU2OSMitoPSFVzMBPC"];
+expNames = ["202007261108_Exp3WU2OSMitoOptGWF_jmDouble",...
+            "202007240231_Exp3WU2OSMitoPSFVzMBPC_jmDouble"];
 iterInd  = [0, 6];
 load(CIRLDataPath + "/Results/U2OSMito/" + expNames(1) + "/" + expNames(1) + ".mat",...
      'X', 'Y', 'Z', 'dXY', 'dZ', 'reconOb', 'retVars');
