@@ -2,8 +2,8 @@ run("Exp3WActinFullSetup.m");
 matFile = CIRLDataPath + "/FairSimData/OMX_U2OS_Actin_525nm.mat";
 
 %% run RunReconstruction
-numIt = 200;
-picIn = 50;    % picture every 50 interations
+numIt = 300;
+picIn = 100;    % picture every 50 interations
 
 %%
 load(CIRLDataPath + "/FairSimOTFs/vz.mat");
