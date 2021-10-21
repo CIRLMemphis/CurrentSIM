@@ -1,7 +1,7 @@
 function fig = Subplot_Pub_xy_xz_Profile(vars, zBF, yBF, colTitles, supTitle, colormapSet, xyRegionX, xyRegionY, xzRegionX, xzRegionZ, colorScale)
 nVars = length(vars);
 fig   = figure('Position', get(0, 'Screensize'));
-[ha, pos] = TightSubplot(2,5,[.01 .001],[.15 .15],[.03 .01]);
+[ha, pos] = TightSubplot(1,4,[.01 .001],[.01 .03],[.01 .01]);
 
 %% resolution pixel computation
 dx     = 0.224;
@@ -18,13 +18,10 @@ dz_SIM_arc = dz_SIM*(6*4)/(2*pi*dZ);
 
 % plot the zoom in
 for k = 1:nVars
-    if (k == 2)
-        x_arc = dx_arc; % widefield arcs for the journal paper
-        arc_color = 'red';
-    else
+    
         x_arc = dx_SIM_arc;
         arc_color = 'blue';
-    end
+    
     curVar  = vars{k};
     if (zBF > size(curVar,3))
         yBFCur = 1 + size(curVar,1)/2;
@@ -57,15 +54,13 @@ if (~isempty(supTitle))
     suptitle(supTitle);
 end
 
-% plot the zoom-in
+% plot the xz plan
+fig   = figure('Position', get(0, 'Screensize'));
+[ha, pos] = TightSubplot(1,4,[.01 .001],[.01 .03],[.01 .01]);
 for k = 1:nVars
-    if (k == 2)
-        z_arc = dz_arc; % widefield arcs for the journal paper
-        arc_color = 'yellow';
-    else
         z_arc = dz_SIM_arc;
         arc_color = 'green';
-    end
+    
     curVar  = vars{k};
     if (zBF > size(curVar,3))
         yBFCur = 1 + size(curVar,1)/2;
@@ -75,7 +70,7 @@ for k = 1:nVars
         zBFCur = zBF;
     end
     
-    axes(ha(k+(2-1)*nVars));
+    axes(ha(k+(1-1)*nVars));
     imagesc(squeeze(curVar(yBFCur,:,:))'); axis square off; colormap(colormapSet);
     caxis(colorScale);
     if (zBF > size(curVar,3))

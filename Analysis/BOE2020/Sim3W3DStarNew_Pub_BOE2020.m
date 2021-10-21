@@ -102,6 +102,45 @@ for k = 1:length(expNames)
 end
 texRet = MSESSIMtoTex(MSE, SSIM, ["2D-FairSIM", "3D-GWF", "3D-MBPC, Iter300"])
 
+%% results at different number of iterations
+load(CIRLDataPath + "\Results\3Dp4S6StarNew\" + expNames(1) + "\" + expNames(1) + ".mat", 'g');
+fomVars = {};
+fomVars{end+1} = g(:,:,:,1,1) + g(:,:,:,1,2) + g(:,:,:,1,3) + g(:,:,:,1,4) + g(:,:,:,1,5)+ ...
+                 g(:,:,:,2,1) + g(:,:,:,2,2) + g(:,:,:,2,3) + g(:,:,:,2,4) + g(:,:,:,2,5)+ ...
+                 g(:,:,:,3,1) + g(:,:,:,3,2) + g(:,:,:,3,3) + g(:,:,:,3,4) + g(:,:,:,3,5);
+temp    = fomVars{end};
+temp    = fftshift(temp);
+temp    = fftn(temp);
+temp    = fftshift(temp);
+temp    = padarray(temp,[128 128 128]);
+temp    = ifftshift(temp);
+temp    = ifftn(temp);
+temp    = ifftshift(temp);
+fomVars{end}   = real(temp);
+fomVars{end}   = fomVars{end}./sum(fomVars{end}(:))*sum(HROb(:));
+fomVars{end+1} = retVars{1};
+fomVars{end}   = fomVars{end}./sum(fomVars{end}(:))*sum(HROb(:));
+fomVars{end+1} = retVars{2};
+fomVars{end}   = fomVars{end}./sum(fomVars{end}(:))*sum(HROb(:));
+fomVars{end+1} = retVars{3};
+fomVars{end}   = fomVars{end}./sum(fomVars{end}(:))*sum(HROb(:));
+MSE  = zeros(length(fomVars), 1);
+SSIM = zeros(length(fomVars), 1);
+for k = 1:length(fomVars)
+    [ MSE(k), SSIM(k) ] = MSESSIM(fomVars{k}, norOb);
+end
+texRet = MSESSIMtoTex(MSE, SSIM, ["initial guess", "3D-MBPC, Iter100", "3D-MBPC, Iter200", "3D-MBPC, Iter300"])
+
+%%
+colormapSet = 'gray';
+fomVars{1}   = fomVars{1}*5;
+MethodCompareFig = StarLike_plot_iter(...
+                                fomVars, z2BF, y2BF, ...
+                                ...["True Object", "Widefield", "3D-GWF Deconvolved WF", "FairSIM, OTF atten", "FairSIM, no OTF atten", "3D-GWF, 1e-3", "3D-GWF, 1e-2", "MBPCReg1e5, 200Iter"],...
+                                ["initial guess", "3D-MBPC, Iter100", "3D-MBPC, Iter200", "3D-MBPC, Iter300"],...
+                                [],...
+                                colormapSet, xyRegionX, xyRegionY, xzRegionX, xzRegionZ, colorScale);
+
 %%
 colormapSet = 'gray';
 MethodCompareFig = Subplot_Pub_xy_xz_Profile(...
@@ -285,4 +324,46 @@ for resolution = [dz, dz_SIM]
     legend;
     %title("Profile along the " + dx_lbl{cnt} + " arc at resolution " + resolution*1000 + " nm");
     cnt = cnt + 1;
+end
+
+%% spectrum comparison
+dUV = 1/512/0.02;
+dW  = 1/512/0.02;
+uc  = 2*1.4/0.515;
+wc  = 0.35*uc;
+fig   = figure('Position', get(0, 'Screensize'));
+[ha, pos] = TightSubplot(1,5,[.01 .001],[.01 .03],[.01 .01]);
+for i = 1:5
+    axes(ha(i));
+    tempFT = log(1+abs(FT(recVars{i})));
+    min(tempFT(:))
+    max(tempFT(:))
+    temp   = tempFT(:,:,256);
+    imagesc(temp); axis image off; caxis([0 14.8269]);
+    if (i == 2)
+        hold on; plot([257-round(uc/dUV), 257-round(uc/dUV)], [240 270], 'LineWidth',3, 'Color', 'r');
+    elseif (i > 2)
+        hold on; plot([257-round(1.8*uc/dUV), 257-round(1.8*uc/dUV)], [240 270], 'LineWidth',3, 'Color', 'k');
+    elseif (i == 1)
+        hold on; plot([257-round(uc/dUV), 257-round(uc/dUV)], [240 270], 'LineWidth',3, 'Color', 'r');
+        hold on; plot([257-round(1.8*uc/dUV), 257-round(1.8*uc/dUV)], [240 270], 'LineWidth',3, 'Color', 'k');
+    end
+end
+
+fig   = figure('Position', get(0, 'Screensize'));
+[ha, pos] = TightSubplot(1,5,[.01 .001],[.01 .03],[.01 .01]);
+for i = 1:5
+    axes(ha(i));
+    tempFT = log(1+abs(FT(recVars{i})));
+    temp   = tempFT(:,256,:);
+
+    imagesc(squeeze(temp)'); axis image off; caxis([0 14.8269]);
+    if (i == 2)
+        hold on; plot([240 270], [257-round(wc/dW), 257-round(wc/dW)], 'LineWidth',3, 'Color', 'm');
+    elseif (i > 2)
+        hold on; plot([240 270], [257-round(1.8*wc/dW), 257-round(1.8*wc/dW)], 'LineWidth',3, 'Color', 'w');
+    elseif (i == 1)
+        hold on; plot([240 270], [257-round(wc/dW), 257-round(wc/dW)], 'LineWidth',3, 'Color', 'm');
+        hold on; plot([240 270], [257-round(1.8*wc/dW), 257-round(1.8*wc/dW)], 'LineWidth',3, 'Color', 'w');
+    end
 end

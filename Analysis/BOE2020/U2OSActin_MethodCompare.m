@@ -43,16 +43,6 @@ end
 recVars{end+1} = upReconOb;
 %recVars{end}   = recVars{end}./sum(recVars{end}(:))*sum(HROb(:));
 
-%% check range of values and total energy
-max(recVars{1}(:))
-max(recVars{2}(:))
-max(recVars{3}(:))
-max(recVars{4}(:))
-
-sum(recVars{1}(:))
-sum(recVars{2}(:))
-sum(recVars{3}(:))
-sum(recVars{4}(:))
 
 %% add the 3D-GWF, 3D-MB, 3D-MBPC results
 for k = 1:length(expNames)
@@ -101,9 +91,10 @@ MethodCompareFig = U2OSActinPlot(recVars, z2BF, y2BF, ...
                                  [0,0,0,0], 1);
                              
 %% For FOM talk
-z2BF = [14, 14, 13];
+z2BF = [14, 14, 14, 13];
 fomVars = {};
 fomVars{end+1} = recVars{1};
+fomVars{end+1} = recVars{2};
 fomVars{end+1} = recVars{3};
 fomVars{end+1} = recVars{4};
 y2BF = 361; %%%%%%%%%%%%%%%%%%%%% REMOVE
@@ -111,10 +102,21 @@ colormapSet = 'gray';
 xyRegionX   =   1024-200:1024;
 xyRegionY   =   1:200;
 MethodCompareFig = U2OSActinPlotFOM(fomVars, z2BF, y2BF, ...
+                                 ["Widefield", "2D-FairSIM", "3D-GWF", "3D-MBPC, 150Iter"],...
+                                 [],...
+                                 colormapSet, xyRegionX, xyRegionY, xzRegionX, xzRegionZ, colorScale,...
+                                 [0,0,0,0], 1);
+                             
+%%
+fomVars_NoFairSIM = {};
+fomVars_NoFairSIM{end+1} = recVars{1};
+fomVars_NoFairSIM{end+1} = recVars{3};
+fomVars_NoFairSIM{end+1} = recVars{4};
+MethodCompareFig = U2OSActinPlotFOM_NoFairSIM(fomVars_NoFairSIM, z2BF, y2BF, ...
                                  ["Widefield", "3D-GWF", "3D-MBPC, 150Iter"],...
                                  [],...
                                  colormapSet, xyRegionX, xyRegionY, xzRegionX, xzRegionZ, colorScale,...
-                                 [0,0,0], 1);
+                                 [0,0,0,0], 1);
                              
                              
 %% xy slices
@@ -140,3 +142,104 @@ for ii=1:size(recVars{varInd},1) %where N is the number of images
   writeVideo(video,img'); %write the image to file
 end
 close(video); %close the file
+
+%% spectrum comparison
+dUV = 1/1024/0.04;
+dW  = 1/53/0.125;
+uc  = 2*1.4/0.525;
+wc  = 0.35*uc;
+fig   = figure('Position', get(0, 'Screensize'));
+[ha, pos] = TightSubplot(1,4,[.01 .001],[.01 .03],[.01 .01]);
+for i = 1:4
+    axes(ha(i));
+    tempFT = log(1+abs(FT(recVars{i})));
+    max(tempFT(:))
+    %tempFT = tempFT/(max(tempFT(:)));
+    temp = tempFT(:,:,53);
+    %temp   = log(1+tempFT(:,:,53));
+    %temp   = temp/(max(temp(:)));
+    imagesc(temp); axis image off; caxis([0 16.0242]);
+    if (i == 1)
+        hold on; plot([513-round(uc/dUV), 513-round(uc/dUV)], [482 542], 'LineWidth',3, 'Color', 'r');
+    elseif (i > 1)
+        hold on; plot([513-round(1.8*uc/dUV), 513-round(1.8*uc/dUV)], [482 542], 'LineWidth',3, 'Color', 'k');
+    end
+end
+
+%%
+fig   = figure('Position', get(0, 'Screensize'));
+[ha, pos] = TightSubplot(4,1,[.01 .3],[.01 .3],[.01 .01]);
+%[ha, pos] = TightSubplot(1,4,[.01 .001],[.01 .03],[.01 .01]);
+for i = 1:4
+    axes(ha(i));
+    tempFT = log(1+abs(FT(recVars{i})));
+    temp   = tempFT(:,513,:);
+    %temp   = temp/(max(temp(:)));
+    imagesc(squeeze(temp)'); axis image off; caxis([0 16.0242]);
+    if (i == 1)
+        hold on; plot([513-round(uc/dUV), 513-round(uc/dUV)], [53-10 53+10], 'LineWidth',3, 'Color', 'r');
+        hold on; plot([497 527], [53-round(wc/dW), 53-round(wc/dW)], 'LineWidth',3, 'Color', 'm');
+    elseif (i > 1)
+        hold on; plot([513-round(1.8*uc/dUV), 513-round(1.8*uc/dUV)], [53-10 53+10], 'LineWidth',3, 'Color', 'k');
+        hold on; plot([497 527], [53-round(1.58*wc/dW), 53-round(1.58*wc/dW)], 'LineWidth',3, 'Color', 'w');
+    end
+end
+
+%% profiles along u of the uw-plane
+figure
+wInd = 100;
+for i = 1:4
+    tempFT = log(1+abs(FT(recVars{i})));
+    temp   = tempFT(:,513,:);
+    if (i > 1)
+        hold on; plot(temp(:,wInd),'LineWidth',3);
+    end
+end
+hold on; line([513-round(1.8*uc/dUV) 513-round(1.8*uc/dUV)], [0 16], 'LineWidth',3, 'Color', 'k'); 
+legend('FairSIM', 'GWF', 'MBPC', '1.8 of lateral cut-off');
+title(['u profile at index w = ', string(wInd)]);
+
+%% profiles along w of the uw-plane
+figure
+for i = 1:4
+    tempFT = log(1+abs(FT(recVars{i})));
+    temp   = tempFT(:,513,:);
+    if (i > 1)
+        hold on; plot(temp(513,:),'LineWidth',3);
+    end
+end
+hold on; line([53-round(1.58*wc/dW) 53-round(1.58*wc/dW)], [0 16], 'LineWidth',3, 'Color', 'k'); 
+legend('FairSIM', 'GWF', 'MBPC', '1.58 of axial cut-off');
+
+%% results at different number of iterations
+z2BF = [13, 13, 13, 13, 13];
+fomVars = {};
+fomVars{end+1} = retVars{1};
+fomVars{end}   = fomVars{end}./sum(fomVars{end}(:))*sum(recVars{end}(:));
+fomVars{end+1} = retVars{3};
+fomVars{end}   = fomVars{end}./sum(fomVars{end}(:))*sum(recVars{end}(:));
+fomVars{end+1} = retVars{5};
+fomVars{end}   = fomVars{end}./sum(fomVars{end}(:))*sum(recVars{end}(:));
+fomVars{end+1} = retVars{7};
+fomVars{end}   = fomVars{end}./sum(fomVars{end}(:))*sum(recVars{end}(:));
+fomVars{end+1} = retVars{10};
+fomVars{end}   = fomVars{end}./sum(fomVars{end}(:))*sum(recVars{end}(:));
+y2BF = 1024-(200-130)-1;
+colormapSet = 'hot';
+%%
+xyRegionX   =   513:1024;
+xyRegionY   =   1:512;
+MethodCompareFig = U2OSActinPlot(fomVars, z2BF, y2BF, ...
+                                 ["Widefield", "2D-FairSIM", "3D-GWF", "3D-MBPC, 150Iter"],...
+                                 [],...
+                                 colormapSet, xyRegionX, xyRegionY, xzRegionX, xzRegionZ, colorScale,...
+                                 [0,0,0,0,0], 0);
+                             
+%%                             
+xyRegionX   =   1024-200:1024;
+xyRegionY   =   1:200;
+MethodCompareFig = U2OSActinPlot(fomVars, z2BF, y2BF, ...
+                                 ["3D-MBPC, 40Iter", "3D-MBPC, 60Iter", "3D-MBPC, 80Iter", "3D-MBPC, 100Iter"],...
+                                 [],...
+                                 colormapSet, xyRegionX, xyRegionY, xzRegionX, xzRegionZ, colorScale,...
+                                 [0,0,0,0,0], 1);

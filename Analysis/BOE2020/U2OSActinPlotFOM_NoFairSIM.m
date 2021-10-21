@@ -64,7 +64,7 @@ if plotXZ
     end
     
     % plot the profile along z axis
-    profColor = {"red", "magenta", "blue", "black"};
+    profColor = {"red", "blue", "black"};
     figure;
     for k = 1:nVars
         curVar  = vars{k};
@@ -93,7 +93,7 @@ if plotXZ
     set(gca,'XTickLabel', lblInd*0.0625);
     ylim([0 1])
     ylabel('Intensity'); xlabel("Distance along z direction (um)");
-    legend('widefield', 'FairSIM', 'GWF', 'MBPC');
+    legend('widefield', 'GWF', 'MBPC');
     
     % plot the profile along z axis
     figure;

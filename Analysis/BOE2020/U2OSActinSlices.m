@@ -27,14 +27,16 @@ for k = 2:nVars
 %         title(colTitles(k));
 %     end
     
-    for i = 1:2:5
-        ind = zBFCur-3+i;
+    iCnt = 1;
+    for i = 1:3:7
+        ind = zBFCur-4+i;
         if (k == nVars)
             ind = ind - 1;
         end
-        axes(ha(round(i/2)));
+        axes(ha(iCnt));
         imagesc(curVar(xyRegionXCur,xyRegionYCur,ind)); axis square off; colormap(colormapSet); 
         caxis(colorScale);
+        iCnt = iCnt + 1;
     end
 
     if 0

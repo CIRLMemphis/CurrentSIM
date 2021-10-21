@@ -1,4 +1,4 @@
-function fig = U2OSActinPlotFOM(vars, zBF, yBF, colTitles, supTitle, colormapSet, xyRegionX, xyRegionY, xzRegionX, xzRegionZ, colorScale, shouldHalf, plotXZ)
+function fig = U2OSActinPlotIter(vars, zBF, yBF, colTitles, supTitle, colormapSet, xyRegionX, xyRegionY, xzRegionX, xzRegionZ, colorScale, shouldHalf, plotXZ)
 nVars = length(vars);
 fig   = figure('Position', get(0, 'Screensize'));
 [ha, pos] = TightSubplot(1,nVars,[.01 .001],[.01 .03],[.01 .01]);

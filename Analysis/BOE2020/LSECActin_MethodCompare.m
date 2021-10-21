@@ -19,8 +19,9 @@ lThe    = 1;
 kPhi    = 1;
 
 % add the widefield image
-load(CIRLDataPath + "\Results\LSECActin\" + expNames(1) + "\" + expNames(1) + ".mat", 'g');
-recVars{end+1} = g(:,:,:,lThe,1) + g(:,:,:,lThe,2) + g(:,:,:,lThe,3) + g(:,:,:,lThe,4) + g(:,:,:,lThe,5);
+load(CIRLDataPath + "\Results\LSECActin\" + expNames(1) + "\" + expNames(1) + ".mat", 'retVars');
+%recVars{end+1} = g(:,:,:,lThe,1) + g(:,:,:,lThe,2) + g(:,:,:,lThe,3) + g(:,:,:,lThe,4) + g(:,:,:,lThe,5);
+recVars{end+1} = retVars{2};
 %recVars{end}   = recVars{end}./sum(recVars{end}(:))*sum(HROb(:));
 
 % add the 2D-GWF restored image
@@ -105,3 +106,26 @@ MethodCompareFig = LSECActinSlices(recVars, z2BF, y2BF, ...
                                  ["Widefield", "2D-FairSIM", "3D-GWF", "3D-MBPC, 150Iter"],...
                                  [],...
                                  colormapSet, xyRegionX, xyRegionY, xzRegionX, xzRegionZ, colorScale);
+
+%% spectrum comparison
+dUV = 1/1024/0.04;
+dW  = 1/7/0.125;
+uc  = 2*1.4/0.525;
+wc  = 0.35*uc;
+fig   = figure('Position', get(0, 'Screensize'));
+[ha, pos] = TightSubplot(1,4,[.01 .001],[.01 .03],[.01 .01]);
+for i = 1:4
+    axes(ha(i));
+    tempFT = log(1+abs(FT(recVars{i})));
+    max(tempFT(:))
+    %tempFT = tempFT/(max(tempFT(:)));
+    temp = tempFT(:,:,7);
+    %temp   = log(1+tempFT(:,:,53));
+    %temp   = temp/(max(temp(:)));
+    imagesc(temp); axis image off; caxis([0 13.2572]);
+    if (i == 1)
+        hold on; plot([513-round(uc/dUV), 513-round(uc/dUV)], [482 542], 'LineWidth',3, 'Color', 'r');
+    elseif (i > 1)
+        hold on; plot([513-round(1.8*uc/dUV), 513-round(1.8*uc/dUV)], [482 542], 'LineWidth',3, 'Color', 'k');
+    end
+end
